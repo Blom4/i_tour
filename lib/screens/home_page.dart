@@ -180,7 +180,6 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     _pageController = PageController(initialPage: 1, viewportFraction: 0.85)
       ..addListener(_onScroll);
     super.initState();
@@ -515,9 +514,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                   const Text(
                     'Address: ',
                     style: TextStyle(
-                        fontFamily: 'WorkSans',
-                        fontSize: 12.0,
-                        fontWeight: FontWeight.w500),
+                      fontFamily: 'WorkSans',
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   SizedBox(
                       width: 105.0,

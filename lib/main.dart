@@ -1,11 +1,18 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:i_tour/screens/login_screen.dart';
 
 import 'package:lottie/lottie.dart';
 
-import 'screens/home_page.dart';
+import 'firebase_options.dart';
+//import 'screens/home_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -36,9 +43,13 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    Future.delayed(const Duration(seconds: 5)).then((value) =>
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (context) => const HomePage())));
+    Future.delayed(const Duration(seconds: 5)).then(
+      (value) => Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+            builder: (context) => const LoginScreen() //const HomePage(),
+            ),
+      ),
+    );
   }
 
   @override

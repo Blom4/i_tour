@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "883579603127",
+    "project_id": "itour-7d8c7",
+    "storage_bucket": "itour-7d8c7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883579603127:android:6c4ee5e33391a88f71e532",
+        "android_client_info": {
+          "package_name": "com.example.i_tour"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "883579603127-n5buhiiqcdl25ivi3t396ukl2cd5c9g3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEhfqILHOi9_t0Ks5c8BXlAvB_apklnNU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "883579603127-n5buhiiqcdl25ivi3t396ukl2cd5c9g3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
