@@ -9,20 +9,27 @@ class Background extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      body: Column(
+      body: Wrap(
+        // alignment: WrapAlignment.spaceEvenly,
+        // runAlignment: WrapAlignment.spaceEvenly,
+        // crossAxisAlignment: WrapCrossAlignment.start,
         children: <Widget>[
           Stack(
             alignment: Alignment.bottomCenter,
             children: <Widget>[
               const WavyHeader(),
-              SvgPicture.asset('assets/up.svg', width: MediaQuery.of(context).size.width*0.6,
-              height: MediaQuery.of(context).size.height*0.3
+              Padding(
+                padding: const EdgeInsets.all(84.0),
+                child: SvgPicture.asset(
+                  'assets/up.svg',
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  // height: MediaQuery.of(context).size.height*0.3
+                ),
               ),
             ],
           ),
           Expanded(
-            child: Container(
-            ),
+            child: Container(),
           ),
           Stack(
             alignment: Alignment.bottomLeft,
@@ -63,7 +70,7 @@ class WavyHeader extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.center),
         ),
-        height: MediaQuery.of(context).size.height / 2.5,
+        height: MediaQuery.of(context).size.height / 2,
       ),
     );
   }
@@ -83,7 +90,7 @@ class WavyFooter extends StatelessWidget {
               begin: Alignment.center,
               end: Alignment.bottomRight),
         ),
-        height: MediaQuery.of(context).size.height / 3,
+        height: MediaQuery.of(context).size.height / 2,
       ),
     );
   }
@@ -182,7 +189,7 @@ class FooterWaveClipper extends CustomClipper<Path> {
 class YellowCircleClipper extends CustomClipper<Rect> {
   @override
   Rect getClip(Size size) {
-   throw UnimplementedError();
+    throw UnimplementedError();
   }
 
   @override
