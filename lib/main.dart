@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:i_tour/screens/login/loginUi.dart';
 import 'package:i_tour/screens/login_screen.dart';
 
 import 'package:lottie/lottie.dart';
@@ -46,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
     Future.delayed(const Duration(seconds: 5)).then(
       (value) => Navigator.of(context).pushReplacement(
         MaterialPageRoute(
-            builder: (context) => const LoginScreen() //const HomePage(),
+            builder: (context) => const Login() //const HomePage(),
             ),
       ),
     );
