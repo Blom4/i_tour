@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:i_tour/screens/Login/background.dart';
+import 'package:i_tour/screens/Registration/Registration.dart';
+import 'package:i_tour/screens/home_page.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});
@@ -33,8 +35,8 @@ class LoginScreen extends ConsumerWidget {
                 // ),
                 //Form
                 Container(
-                  width: width*0.9,
-                  padding:EdgeInsets.only(left: width*0.1),
+                  width: width * 0.9,
+                  padding: EdgeInsets.only(left: width * 0.1),
                   child: Form(
                     child: Column(
                       children: [
@@ -66,18 +68,42 @@ class LoginScreen extends ConsumerWidget {
                         const SizedBox(
                           height: 20,
                         ),
-                         //login button
+                        //login button
                         TextButton(
                           style: TextButton.styleFrom(
-                            backgroundColor: Color.fromARGB(255, 80, 158, 189)
-                          ),
-                          onPressed: () {},
+                              backgroundColor:
+                                  Color.fromARGB(255, 80, 158, 189)),
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return const HomePage();
+                              },
+                            ));
+                          },
                           //style: ElevatedButton.styleFrom(),
                           child: const Text(
                             "Login",
                             style: TextStyle(color: Colors.white),
                           ),
-                        ), 
+                        ),
+                        // SizedBox(height: height*0.01,),
+                        TextButton(
+                          // style: TextButton.styleFrom(
+                          //     backgroundColor:
+                          //         Color.fromARGB(255, 80, 158, 189)),
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return const Registration();
+                              },
+                            ));
+                          },
+                          //style: ElevatedButton.styleFrom(),
+                          child: const Text(
+                            "Not have an account? Register",
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                        ),
                       ],
                     ),
                   ),
