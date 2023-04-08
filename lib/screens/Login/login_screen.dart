@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
+import 'package:i_tour/screens/Home/HomePage/HomePage.dart';
 import 'package:i_tour/screens/Login/background.dart';
 import 'package:i_tour/screens/Registration/Registration.dart';
-import 'package:i_tour/screens/home_page.dart';
+import 'package:i_tour/screens/Maps/Maps.dart';
 
 class LoginScreen extends ConsumerWidget {
   const LoginScreen({super.key});

@@ -12,23 +12,23 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'dart:ui' as ui;
 
-import '../models/auto_complete_result.dart';
-import '../providers/search_places.dart';
-import '../services/map_services.dart';
-import '../widgets/distination_field_widget.dart';
-import '../widgets/near_me_places_widget.dart';
-import '../widgets/no_results_Widget.dart';
-import '../widgets/origin_field_widget.dart';
-import '../widgets/search_places_widget.dart';
+import '../../models/auto_complete_result.dart';
+import '../../providers/search_places.dart';
+import '../../services/map_services.dart';
+import '../../widgets/distination_field_widget.dart';
+import '../../widgets/near_me_places_widget.dart';
+import '../../widgets/no_results_Widget.dart';
+import '../../widgets/origin_field_widget.dart';
+import '../../widgets/search_places_widget.dart';
 
-class HomePage extends ConsumerStatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class Maps extends ConsumerStatefulWidget {
+  const Maps({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _MapsState createState() => _MapsState();
 }
 
-class _HomePageState extends ConsumerState<HomePage> {
+class _MapsState extends ConsumerState<Maps> {
   final Completer<GoogleMapController> _controller = Completer();
 
 //Debounce to throttle async calls during search
