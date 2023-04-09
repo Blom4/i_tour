@@ -3,10 +3,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Components/ChoosePerson.dart';
+import 'package:i_tour/screens/Home/WeatherForcast/Components/Search.dart';
+import 'package:i_tour/screens/Home/WeatherForcast/Service.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Constants.dart';
+import 'package:search_page/search_page.dart';
 import 'package:weather/weather.dart';
 
 class WeatherForecast extends StatefulWidget {
@@ -18,7 +22,7 @@ class WeatherForecast extends StatefulWidget {
 
 class _WeatherForecastState extends State<WeatherForecast> {
   late WeatherFactory ws;
-
+  final searchController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -50,16 +54,14 @@ class _WeatherForecastState extends State<WeatherForecast> {
               child: Column(
                 children: [
                   SizedBox(
-                    height: height * 0.05,
+                    height: height * 0.1,
                   ),
                   SvgPicture.asset(
                     // color: Colors.white,
-                    width: width * 0.8,
+                    width: width * 0.73,
                     "assets/weather/sunclouds.svg",
-                    placeholderBuilder: (context) => Container(
-                      // padding: const EdgeInsets.all(30.0),
-                      child: const CircularProgressIndicator(),
-                    ),
+                    placeholderBuilder: (context) =>
+                        const CircularProgressIndicator(),
                   ),
                   const Text(
                     "15°",
@@ -283,8 +285,12 @@ class _WeatherForecastState extends State<WeatherForecast> {
             )
           ],
         ),
-        Positioned(top: height*0.05,
-          right: width*0.01,child: ChoosePerson())
+        Positioned(
+            left: width * 0.03, top: height * 0.055, child: SearchField()),
+        Positioned(
+            top: height * 0.05,
+            right: width * 0.01,
+            child: const ChoosePerson())
       ],
     );
   }
