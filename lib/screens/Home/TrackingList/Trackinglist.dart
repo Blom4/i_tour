@@ -82,10 +82,11 @@ class _TrackingListState extends State<TrackingList> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Add a task to your list'),
+            title: const Text('People to share tour with'),
             content: TextField(
               controller: _textFieldController,
-              decoration: const InputDecoration(hintText: 'Enter task here'),
+              keyboardType: TextInputType.emailAddress,
+              decoration: const InputDecoration(hintText: 'Enter email for user'),
             ),
             actions: <Widget>[
               // add button
