@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:i_tour/screens/Home/WeatherForcast/Service.dart';
+import 'package:i_tour/services/WeatherService.dart';
 
 class SearchField extends StatefulWidget {
   const SearchField({super.key});
@@ -26,6 +26,7 @@ class _SearchFieldState extends State<SearchField> {
                 Border.all(color: const Color.fromARGB(255, 201, 210, 214)),
             color: const Color.fromARGB(255, 212, 218, 218)),
         child: TypeAheadField(
+          
           textFieldConfiguration: TextFieldConfiguration(
               autofocus: true,
               style: DefaultTextStyle.of(context)

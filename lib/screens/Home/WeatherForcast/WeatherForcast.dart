@@ -1,14 +1,8 @@
 import 'dart:async';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:flutter_typeahead/flutter_typeahead.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Components/ChoosePerson.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Components/Search.dart';
-import 'package:i_tour/screens/Home/WeatherForcast/Service.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Constants.dart';
 import 'package:search_page/search_page.dart';
 import 'package:weather/weather.dart';
