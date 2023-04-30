@@ -52,6 +52,15 @@ dependencies:
   firebase_auth: ^4.4.0
   cloud_firestore: ^4.5.0
   firebase_storage: ^11.1.0
+  flutter_svg: ^2.0.4
+  get: ^4.6.5
+  email_validator: ^2.1.17
+  flutter_spinkit: ^5.1.0
+  persistent_bottom_nav_bar: ^5.0.2
+  weather: ^2.0.1
+  dropdown_button2: ^2.0.0
+  search_page: ^2.3.0
+  flutter_typeahead: ^4.3.7
 
 dev_dependencies:
   flutter_test:
@@ -79,6 +88,8 @@ flutter:
   assets:
     - assets/animassets/mapanimation.json
     - assets/mapicons/
+    - assets/
+    - assets/weather/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
