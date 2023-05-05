@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
+import 'package:i_tour/logic/firebase_auth.dart';
 import 'package:i_tour/screens/Home/HomePage/HomePage.dart';
 import 'package:i_tour/screens/Login/background.dart';
 import 'package:i_tour/screens/Registration/Registration.dart';
@@ -74,12 +75,20 @@ class LoginScreen extends ConsumerWidget {
                           style: TextButton.styleFrom(
                               backgroundColor:
                                   Color.fromARGB(255, 80, 158, 189)),
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (context) {
-                                return const HomePage();
-                              },
-                            ));
+                          onPressed: () async {
+                            try {
+                              await Auth().createUserWithEmailAndPassword(
+                                  email: "davertzshelile@gmail.com",
+                                  password: "M!lefetsane@com");
+                              print(Auth().currentUser);
+                            } catch (e) {
+                              print(e);
+                            }
+                            // Navigator.push(context, MaterialPageRoute(
+                            //   builder: (context) {
+                            //     return const HomePage();
+                            //   },
+                            // ));
                           },
                           //style: ElevatedButton.styleFrom(),
                           child: const Text(

@@ -29,6 +29,13 @@
             {
               "client_id": "883579603127-n5buhiiqcdl25ivi3t396ukl2cd5c9g3.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "883579603127-9e2ki97npo7p2thvb5e5903hro5n2jl6.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.iTour"
+              }
             }
           ]
         }
