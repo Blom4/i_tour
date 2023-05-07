@@ -77,10 +77,10 @@ class LoginScreen extends ConsumerWidget {
                                   Color.fromARGB(255, 80, 158, 189)),
                           onPressed: () async {
                             try {
-                              await Auth().createUserWithEmailAndPassword(
+                              await Auth().signWithEmailAndPassword(
                                   email: "davertzshelile@gmail.com",
                                   password: "M!lefetsane@com");
-                              print(Auth().currentUser);
+                            
                             } catch (e) {
                               print(e);
                             }

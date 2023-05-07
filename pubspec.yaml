@@ -61,6 +61,8 @@ dependencies:
   dropdown_button2: ^2.0.0
   search_page: ^2.3.0
   flutter_typeahead: ^4.3.7
+  flutter_pw_validator: ^1.5.0
+  wc_form_validators: ^1.0.0
 
 dev_dependencies:
   flutter_test:
