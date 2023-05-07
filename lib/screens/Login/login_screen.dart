@@ -6,15 +6,24 @@ import 'package:i_tour/screens/Home/HomePage/HomePage.dart';
 import 'package:i_tour/screens/Login/background.dart';
 import 'package:i_tour/screens/Registration/Registration.dart';
 import 'package:i_tour/screens/Maps/Maps.dart';
+import 'package:wc_form_validators/wc_form_validators.dart';
 
-class LoginScreen extends ConsumerWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
-  //TextEditingController emailController = TextEditingController();
-  //TextEditingController passwordController = TextEditingController();
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  State<LoginScreen> createState() => _LoginScreen();
+}
+
+class _LoginScreen extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+  bool isObscure = true;
+  @override
+  Widget build(
+    BuildContext context,
+  ) {
     final width = MediaQuery.of(context).copyWith().size.width;
     final height = MediaQuery.of(context).copyWith().size.height;
     return Scaffold(
@@ -40,9 +49,15 @@ class LoginScreen extends ConsumerWidget {
                   width: width * 0.9,
                   padding: EdgeInsets.only(left: width * 0.1),
                   child: Form(
+                    key: _formKey,
                     child: Column(
                       children: [
                         TextFormField(
+                          validator: Validators.compose([
+                            Validators.required('Email is required'),
+                            Validators.email('wrong email format'),
+                          ]),
+                          controller: emailController,
                           decoration: const InputDecoration(
                             labelText: "Email Address",
                             // enabledBorder: OutlineInputBorder(
@@ -57,7 +72,22 @@ class LoginScreen extends ConsumerWidget {
                           height: 20,
                         ),
                         TextFormField(
-                          decoration: const InputDecoration(
+                          validator: Validators.compose([
+                            Validators.required('Passoword is required'),
+                          ]),
+                          controller: passwordController,
+                          obscureText: isObscure,
+                          decoration: InputDecoration(
+                            suffixIcon: IconButton(
+                              icon: Icon(isObscure
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  isObscure = !isObscure;
+                                });
+                              },
+                            ),
                             labelText: "Password",
                             // enabledBorder: OutlineInputBorder(
                             //   borderSide: BorderSide(),
@@ -76,19 +106,25 @@ class LoginScreen extends ConsumerWidget {
                               backgroundColor:
                                   Color.fromARGB(255, 80, 158, 189)),
                           onPressed: () async {
-                            try {
-                              await Auth().signWithEmailAndPassword(
-                                  email: "davertzshelile@gmail.com",
-                                  password: "M!lefetsane@com");
-                            
-                            } catch (e) {
-                              print(e);
+                            if (_formKey.currentState!.validate()) {
+                              try {
+                                await Auth().signWithEmailAndPassword(
+                                    email: emailController.text.trim(),
+                                    password: passwordController.text.trim());
+                                if (Auth().currentUser != null) {
+                                  // ignore: use_build_context_synchronously
+                                  Navigator.pushReplacement(context, MaterialPageRoute(
+                                    builder: (context) {
+                                      return const HomePage();
+                                    },
+                                  ));
+                                } else {
+                                  throw Exception("failed to login");
+                                }
+                              } catch (e) {
+                                print(e);
+                              }
                             }
-                            // Navigator.push(context, MaterialPageRoute(
-                            //   builder: (context) {
-                            //     return const HomePage();
-                            //   },
-                            // ));
                           },
                           //style: ElevatedButton.styleFrom(),
                           child: const Text(

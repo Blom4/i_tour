@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:get/get.dart';
 import 'package:i_tour/constants/constants.dart';
 
 class Auth {
@@ -14,20 +16,31 @@ class Auth {
         email: email, password: password);
   }
 
-  Future<void> createUserWithEmailAndPassword(
-      {required String email, required String password,required String full_name}) async {
+  Future createUserWithEmailAndPassword(
+      {required String email,
+      required String password,
+      required String full_name}) async {
     try {
+      Position pos = await determinePosition();
       await _firebaseAuth.createUserWithEmailAndPassword(
-          email: email, password: password,);
+        email: email,
+        password: password,
+      );
       if (currentUser != null) {
-        await firebaseInstance.collection("User").add({
+        var res = await firebaseInstance.collection("User").add({
           'auth_id': currentUser!.uid,
-          'full_name':full_name,
-          'liveLocation':const GeoPoint(0, 0),
-          'monitor':null
-
+          'full_name': full_name,
+          'liveLocation': GeoPoint(pos.latitude, pos.longitude),
+          'monitor': null
         });
-      } else {}
+        if (res.id.isNotEmpty) {
+          return const Response(statusCode: 201);
+        } else {
+          throw Exception("user document not created");
+        }
+      } else {
+        throw Exception("user auth not created");
+      }
     } catch (e) {
       debugPrint(e.toString());
     }

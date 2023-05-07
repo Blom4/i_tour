@@ -160,12 +160,24 @@ class _RegistrationState extends State<Registration> {
                                       const Color.fromARGB(255, 45, 183, 207)),
                               onPressed: () async {
                                 if (_formKey.currentState!.validate()) {
-                                  if (passwordController.text ==
-                                      repasswordController.text) {
-                                    await Auth().createUserWithEmailAndPassword(
-                                        email: emailController.text,
-                                        password: passwordController.text,
-                                        full_name: nameController.text);
+                                  if (passwordController.text.trim() ==
+                                      repasswordController.text.trim()) {
+                                    var res = await Auth()
+                                        .createUserWithEmailAndPassword(
+                                            email: emailController.text.trim(),
+                                            password:
+                                                passwordController.text.trim(),
+                                            full_name:
+                                                nameController.text.trim());
+                                    if (res.statusCode == 201) {
+                                      // ignore: use_build_context_synchronously
+                                      Navigator.pushReplacement(context,
+                                          MaterialPageRoute(
+                                        builder: (context) {
+                                          return const LoginScreen();
+                                        },
+                                      ));
+                                    }
                                   } else {}
                                 } else {}
                               },
@@ -179,7 +191,8 @@ class _RegistrationState extends State<Registration> {
                       Center(
                           child: GestureDetector(
                               onTap: () {
-                                Navigator.push(context, MaterialPageRoute(
+                                Navigator.pushReplacement(context,
+                                    MaterialPageRoute(
                                   builder: (context) {
                                     return const LoginScreen();
                                   },
