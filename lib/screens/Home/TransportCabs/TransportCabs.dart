@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class TransportCabs extends StatefulWidget {
@@ -28,7 +29,7 @@ class _TransportCabsState extends State<TransportCabs> {
     _textFieldController.clear();
   }
 
-  Widget _buildCarsItems(String title, BuildContext context) {
+  Widget _buildCarsItems(String name,String contacts, BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(10),
       width: MediaQuery.of(context).copyWith().size.width * 0.9,
@@ -44,43 +45,51 @@ class _TransportCabsState extends State<TransportCabs> {
           color: Color.fromARGB(255, 255, 252, 255),
           borderRadius: BorderRadius.all(Radius.circular(15))),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           // SizedBox(width: MediaQuery.of(context).copyWith().size.width*0.01,),
-          Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).copyWith().size.width * 0.05),
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Image.asset(
-                "assets/cab.png",
-                width: MediaQuery.of(context).copyWith().size.width * 1,
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: EdgeInsets.only(
+          //       left: MediaQuery.of(context).copyWith().size.width * 0.05),
+          //   child: CircleAvatar(
+          //     backgroundColor: Colors.white,
+          //     child: Image.asset(
+          //       "assets/cab.png",
+          //       width: MediaQuery.of(context).copyWith().size.width * 1,
+          //     ),
+          //   ),
+          // ),
           SizedBox(
-              width: MediaQuery.of(context).copyWith().size.width * 0.6,
+              width: MediaQuery.of(context).copyWith().size.width * 0.5,
               child: Text(
-                title,
+                name,
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
                 textAlign: TextAlign.center,
               )),
-          Padding(
-              padding: EdgeInsets.only(
-                  right: MediaQuery.of(context).copyWith().size.width * 0.05),
-              child: SizedBox(
-                width: MediaQuery.of(context).copyWith().size.width * 0.05,
-              ))
+          SizedBox(
+              width: MediaQuery.of(context).copyWith().size.width * 0.4,
+              child: Text(
+                contacts,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                textAlign: TextAlign.center,
+              )),
+          // Padding(
+          //     padding: EdgeInsets.only(
+          //         right: MediaQuery.of(context).copyWith().size.width * 0.05),
+          //     child: SizedBox(
+          //       width: MediaQuery.of(context).copyWith().size.width * 0.05,
+          //     ))
         ],
       ),
     );
   }
 
-  List<Widget> _getItems(BuildContext context) {
+  List<Widget> _getItems(BuildContext context, var data) {
     final List<Widget> _todoWidgets = <Widget>[];
-    for (String title in _todoList) {
-      _todoWidgets.add(_buildCarsItems(title, context));
+    for (var item in data) {
+      _todoWidgets.add(_buildCarsItems(item['name'],item['contacts'], context));
     }
     return _todoWidgets;
   }
@@ -127,7 +136,30 @@ class _TransportCabsState extends State<TransportCabs> {
           padding: EdgeInsets.only(
               top: MediaQuery.of(context).copyWith().size.height * 0.3,
               bottom: MediaQuery.of(context).copyWith().size.height * 0.1),
-          child: ListView(children: _getItems(context)),
+          child: StreamBuilder<QuerySnapshot>(
+            stream: _carsStream,
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Something went wrong');
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Padding(
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).copyWith().size.height * 0.3,
+                      // left: MediaQuery.of(context).copyWith().size.width * 0.5
+                    ),
+                    child: const SpinKitFoldingCube(
+                      color: Colors.blue,
+                      size: 80,
+                      // duration: Duration(milliseconds: 1000),
+                    ));
+              }
+              return ListView(
+                  children: _getItems(context, snapshot.data!.docs));
+            },
+          ),
         ),
       ],
     );
