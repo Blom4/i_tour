@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:i_tour/screens/Home/Profile/components/Background.dart';
 
@@ -9,6 +10,9 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  final Stream<QuerySnapshot> _usersStream =
+      FirebaseFirestore.instance.collection("user").snapshots();
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).copyWith().size.width;
@@ -16,7 +20,7 @@ class _ProfileState extends State<Profile> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        Background(),
+        const Background(),
         Container(
           width: width,
           height: height,
@@ -28,11 +32,11 @@ class _ProfileState extends State<Profile> {
                     width: width * 0.5,
                     height: height * 0.2,
                     child: CircleAvatar(
-                      backgroundColor: Color.fromARGB(255, 230, 233, 233),
+                      backgroundColor: const Color.fromARGB(255, 230, 233, 233),
                       child: Icon(
                         Icons.person_rounded,
                         size: width * 0.4,
-                        color: Color.fromARGB(255, 51, 153, 156),
+                        color: const Color.fromARGB(255, 51, 153, 156),
                       ),
                     ),
                   )),
@@ -41,14 +45,15 @@ class _ProfileState extends State<Profile> {
               ),
               TextFormField(
                 enabled: false,
-                decoration:  const InputDecoration(
+                decoration: const InputDecoration(
                     icon: Icon(
                       Icons.person,
                       color: Color.fromARGB(255, 93, 149, 201),
                     ),
                     border: UnderlineInputBorder(),
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 93, 149, 201),),
+                    labelStyle: TextStyle(
+                      color: Color.fromARGB(255, 93, 149, 201),
+                    ),
                     labelText: "Malefetsane Shelile"),
               ),
               SizedBox(
@@ -56,14 +61,15 @@ class _ProfileState extends State<Profile> {
               ),
               TextFormField(
                 enabled: false,
-                decoration:  const InputDecoration(
+                decoration: const InputDecoration(
                     icon: Icon(
                       Icons.email,
                       color: Color.fromARGB(255, 93, 149, 201),
                     ),
                     border: UnderlineInputBorder(),
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 93, 149, 201),),
+                    labelStyle: TextStyle(
+                      color: Color.fromARGB(255, 93, 149, 201),
+                    ),
                     labelText: "email@gmail.com"),
               ),
               SizedBox(
@@ -71,28 +77,29 @@ class _ProfileState extends State<Profile> {
               ),
               TextFormField(
                 enabled: false,
-                decoration:  const InputDecoration(
-                    icon: Icon(
-                      Icons.call,
-                      color: Color.fromARGB(255, 93, 149, 201),
-                    ),
-                    border: UnderlineInputBorder(),
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 93, 149, 201),),
-                    labelText: "+266 69356845"),
-              ),
-              TextFormField(
-                enabled: false,
-                decoration:  const InputDecoration(
+                decoration: const InputDecoration(
                     icon: Icon(
                       Icons.pin_drop,
                       color: Color.fromARGB(255, 93, 149, 201),
                     ),
                     border: UnderlineInputBorder(),
-                    labelStyle:
-                        TextStyle(color: Color.fromARGB(255, 93, 149, 201),),
+                    labelStyle: TextStyle(
+                      color: Color.fromARGB(255, 93, 149, 201),
+                    ),
                     labelText: "232393283892 , 343849349845445"),
               ),
+              TextButton(
+                onPressed: () => null,
+                child: const Text(
+                  "Sign Out",
+                  style: TextStyle(color: Colors.white),
+                ),
+                
+                style: ButtonStyle(
+                  
+                    backgroundColor: MaterialStateProperty.all(
+                        const Color.fromARGB(255, 35, 190, 196))),
+              )
             ],
           ),
         )
