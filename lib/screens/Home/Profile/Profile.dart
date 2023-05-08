@@ -48,7 +48,7 @@ class _ProfileState extends State<Profile> {
             }
             // print(snapshot.data!.docs.first['full_name']);
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return SizedBox();
+              return const SizedBox();
             }
             final document = snapshot.data!.docs.firstWhere(
                 (element) => element['auth_id'] == Auth().currentUser!.uid);
@@ -80,12 +80,12 @@ class _ProfileState extends State<Profile> {
                   TextFormField(
                     enabled: false,
                     decoration: InputDecoration(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.person,
                           color: Color.fromARGB(255, 93, 149, 201),
                         ),
-                        border: UnderlineInputBorder(),
-                        labelStyle: TextStyle(
+                        border: const UnderlineInputBorder(),
+                        labelStyle: const TextStyle(
                           color: Color.fromARGB(255, 93, 149, 201),
                         ),
                         labelText: document['full_name']),
@@ -96,12 +96,12 @@ class _ProfileState extends State<Profile> {
                   TextFormField(
                     enabled: false,
                     decoration: InputDecoration(
-                        icon: Icon(
+                        icon: const Icon(
                           Icons.email,
                           color: Color.fromARGB(255, 93, 149, 201),
                         ),
-                        border: UnderlineInputBorder(),
-                        labelStyle: TextStyle(
+                        border: const UnderlineInputBorder(),
+                        labelStyle: const TextStyle(
                           color: Color.fromARGB(255, 93, 149, 201),
                         ),
                         labelText: Auth().currentUser!.email ?? ""),
@@ -116,11 +116,12 @@ class _ProfileState extends State<Profile> {
                           Icons.pin_drop,
                           color: Color.fromARGB(255, 93, 149, 201),
                         ),
-                        border: UnderlineInputBorder(),
-                        labelStyle: TextStyle(
+                        border: const UnderlineInputBorder(),
+                        labelStyle: const TextStyle(
                           color: Color.fromARGB(255, 93, 149, 201),
                         ),
                         labelText: document['liveLocation'] != null
+                            // ignore: prefer_interpolation_to_compose_strings
                             ? document['liveLocation'].latitude.toString() +
                                 ", " +
                                 document['liveLocation'].longitude.toString()

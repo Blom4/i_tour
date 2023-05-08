@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -9,9 +10,11 @@ class TransportCabs extends StatefulWidget {
 }
 
 class _TransportCabsState extends State<TransportCabs> {
+  final Stream<QuerySnapshot> _carsStream =
+      FirebaseFirestore.instance.collection("Tranport").snapshots();
   final List<String> _todoList = <String>[
-    "Mamorena cabs"
-    ,"Uba cabs official",
+    "Mamorena cabs",
+    "Uba cabs official",
     "Transport activity",
     "Motlokovan",
   ];
@@ -25,7 +28,7 @@ class _TransportCabsState extends State<TransportCabs> {
     _textFieldController.clear();
   }
 
-  Widget _buildTrackPerson(String title, BuildContext context) {
+  Widget _buildCarsItems(String title, BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(10),
       width: MediaQuery.of(context).copyWith().size.width * 0.9,
@@ -64,20 +67,20 @@ class _TransportCabsState extends State<TransportCabs> {
                 textAlign: TextAlign.center,
               )),
           Padding(
-            padding: EdgeInsets.only(
-                right: MediaQuery.of(context).copyWith().size.width * 0.05),
-            child: SizedBox(width: MediaQuery.of(context).copyWith().size.width * 0.05,)
-          )
+              padding: EdgeInsets.only(
+                  right: MediaQuery.of(context).copyWith().size.width * 0.05),
+              child: SizedBox(
+                width: MediaQuery.of(context).copyWith().size.width * 0.05,
+              ))
         ],
       ),
     );
   }
 
-
   List<Widget> _getItems(BuildContext context) {
     final List<Widget> _todoWidgets = <Widget>[];
     for (String title in _todoList) {
-      _todoWidgets.add(_buildTrackPerson(title, context));
+      _todoWidgets.add(_buildCarsItems(title, context));
     }
     return _todoWidgets;
   }
@@ -111,8 +114,7 @@ class _TransportCabsState extends State<TransportCabs> {
               SizedBox(
                   width: MediaQuery.of(context).copyWith().size.width * 0.4,
                   child: Text(
-                    "Here are List of Cabs you can use"
-                        .toUpperCase(),
+                    "Here are List of Cabs you can use".toUpperCase(),
                     style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
