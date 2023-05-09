@@ -42,7 +42,7 @@ class Auth {
         throw Exception("user auth not created");
       }
     } catch (e) {
-      debugPrint(e.toString());
+      throw Exception(e);
     }
   }
 
