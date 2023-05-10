@@ -29,6 +29,7 @@ class Auth {
       if (currentUser != null) {
         var res = await firebaseInstance.collection("User").add({
           'auth_id': currentUser!.uid,
+          'email':currentUser!.email,
           'full_name': full_name,
           'liveLocation': GeoPoint(pos.latitude, pos.longitude),
           'monitor': null

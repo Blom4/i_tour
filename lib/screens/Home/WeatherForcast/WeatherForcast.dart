@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:i_tour/logic/firebase_auth.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Components/ChoosePerson.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Components/Search.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Constants.dart';
@@ -27,6 +28,7 @@ class _WeatherForecastState extends State<WeatherForecast> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).copyWith().size.width;
     final height = MediaQuery.of(context).copyWith().size.height;
+    // print(Auth().currentUser!.email);
     return Stack(
       children: [
         Wrap(

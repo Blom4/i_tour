@@ -13,23 +13,23 @@ class TransportCabs extends StatefulWidget {
 class _TransportCabsState extends State<TransportCabs> {
   final Stream<QuerySnapshot> _carsStream =
       FirebaseFirestore.instance.collection("Tranport").snapshots();
-  final List<String> _todoList = <String>[
-    "Mamorena cabs",
-    "Uba cabs official",
-    "Transport activity",
-    "Motlokovan",
-  ];
+  // final List<String> _todoList = <String>[
+  //   "Mamorena cabs",
+  //   "Uba cabs official",
+  //   "Transport activity",
+  //   "Motlokovan",
+  // ];
   // text field
   final TextEditingController _textFieldController = TextEditingController();
-  void _addTodoItem(String title) {
-    //  a set state will notify the app that the state has changed
-    setState(() {
-      _todoList.add(title);
-    });
-    _textFieldController.clear();
-  }
+  // void _addTodoItem(String title) {
+  //   //  a set state will notify the app that the state has changed
+  //   setState(() {
+  //     _todoList.add(title);
+  //   });
+  //   _textFieldController.clear();
+  // }
 
-  Widget _buildCarsItems(String name,String contacts, BuildContext context) {
+  Widget _buildCarsItems(String name, String contacts, BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(10),
       width: MediaQuery.of(context).copyWith().size.width * 0.9,
@@ -47,18 +47,6 @@ class _TransportCabsState extends State<TransportCabs> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // SizedBox(width: MediaQuery.of(context).copyWith().size.width*0.01,),
-          // Padding(
-          //   padding: EdgeInsets.only(
-          //       left: MediaQuery.of(context).copyWith().size.width * 0.05),
-          //   child: CircleAvatar(
-          //     backgroundColor: Colors.white,
-          //     child: Image.asset(
-          //       "assets/cab.png",
-          //       width: MediaQuery.of(context).copyWith().size.width * 1,
-          //     ),
-          //   ),
-          // ),
           SizedBox(
               width: MediaQuery.of(context).copyWith().size.width * 0.5,
               child: Text(
@@ -75,12 +63,6 @@ class _TransportCabsState extends State<TransportCabs> {
                 maxLines: 1,
                 textAlign: TextAlign.center,
               )),
-          // Padding(
-          //     padding: EdgeInsets.only(
-          //         right: MediaQuery.of(context).copyWith().size.width * 0.05),
-          //     child: SizedBox(
-          //       width: MediaQuery.of(context).copyWith().size.width * 0.05,
-          //     ))
         ],
       ),
     );
@@ -89,7 +71,8 @@ class _TransportCabsState extends State<TransportCabs> {
   List<Widget> _getItems(BuildContext context, var data) {
     final List<Widget> _todoWidgets = <Widget>[];
     for (var item in data) {
-      _todoWidgets.add(_buildCarsItems(item['name'],item['contacts'], context));
+      _todoWidgets
+          .add(_buildCarsItems(item['name'], item['contacts'], context));
     }
     return _todoWidgets;
   }
