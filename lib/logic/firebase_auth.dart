@@ -20,6 +20,7 @@ class Auth {
       {required String email,
       required String password,
       required String full_name}) async {
+        // _firebaseAuth.sendEmailVerification()
     try {
       Position pos = await determinePosition();
       await _firebaseAuth.createUserWithEmailAndPassword(
