@@ -4,6 +4,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:i_tour/constants/constants.dart';
 import 'package:i_tour/logic/firebase_auth.dart';
+import 'package:i_tour/screens/Home/TrackingList/Logic/Tracking_logic.dart';
 
 class TrackingList extends StatefulWidget {
   const TrackingList({super.key});
@@ -114,6 +115,7 @@ class _TrackingListState extends State<TrackingList> {
         context: context,
         builder: (BuildContext context) {
           String _error = "";
+          bool isFound = false;
           return AlertDialog(
             title: const Text('People to share tour with'),
             content: SizedBox(
@@ -124,8 +126,8 @@ class _TrackingListState extends State<TrackingList> {
                     children: [
                       TextField(
                         onChanged: (value) async {
-                          
                           // print(value);
+
                           if (Auth().currentUser!.email!.toLowerCase() !=
                               value.toLowerCase()) {
                             var results = await firebaseInstance
@@ -139,12 +141,45 @@ class _TrackingListState extends State<TrackingList> {
                                 _error = "user does not exist";
                               });
                             } else {
-                              setState(() {
-                                _error = "";
-                              });
+                              // var data1 = results.docs.first.data();
+                              // print(results.docs.first);
+                              var res = await firebaseInstance
+                                  .collection("User")
+                                  .where("email",
+                                      isEqualTo: Auth()
+                                          .currentUser!
+                                          .email!
+                                          .toLowerCase())
+                                  .get();
+                              var data;
+                              // var data2 =
+                              //     await res.docs.first.data()['monitor'];
+                              for (var element
+                                  in res.docs.first.data()['monitor']??[]) {
+                                data = await element.get();
+                                if (results.docs.first.data()['email'] ==
+                                    data.data()['email']) {
+                                  isFound = true;
+                                  break;
+                                }
+                              }
+
+                              // print(res.docs.first.data());
+                              if (isFound) {
+                                setState(() {
+                                  isFound = true;
+                                  _error = "You have added user";
+                                });
+                              } else {
+                                setState(() {
+                                  isFound = false;
+                                  _error = "";
+                                });
+                              }
                             }
                           } else {
                             setState(() {
+                              isFound = true;
                               _error = "you cannot add your account";
                             });
                           }
@@ -169,11 +204,14 @@ class _TrackingListState extends State<TrackingList> {
             actions: <Widget>[
               // add button
               TextButton(
-                child: const Text('ADD'),
-                onPressed: () {
+                onPressed: () async {
+                  // print(isFound);
+                  await TrackingLogic.addTrackingUser(
+                      user: _textFieldController.text.trim().toLowerCase(),
+                      isFound: isFound);
                   Navigator.of(context).pop();
-                  // _addTodoItem(_textFieldController.text);
                 },
+                child: const Text('ADD'),
               ),
               // cancel button
               TextButton(
@@ -267,7 +305,7 @@ class _TrackingListState extends State<TrackingList> {
                     bottom:
                         MediaQuery.of(context).copyWith().size.height * 0.1),
                 child:
-                    ListView(children: _getItems(context, document['monitor'])),
+                    ListView(children: _getItems(context, document['monitor']??[])),
               );
             },
           ),
