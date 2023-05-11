@@ -137,7 +137,7 @@ class _LoginScreen extends State<LoginScreen> {
                                         isLoading = true;
                                       });
                                       await Auth().signWithEmailAndPassword(
-                                          email: emailController.text.trim(),
+                                          email: emailController.text.trim().toLowerCase(),
                                           password:
                                               passwordController.text.trim());
                                       if (Auth().currentUser != null) {

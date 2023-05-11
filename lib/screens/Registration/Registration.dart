@@ -194,6 +194,7 @@ class _RegistrationState extends State<Registration> {
                                             var res = await Auth()
                                                 .createUserWithEmailAndPassword(
                                                     email: emailController.text
+                                                        .toLowerCase()
                                                         .trim(),
                                                     password: passwordController
                                                         .text

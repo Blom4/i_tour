@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:i_tour/constants/constants.dart';
 import 'package:i_tour/logic/firebase_auth.dart';
 
 class TrackingList extends StatefulWidget {
@@ -15,6 +16,7 @@ class _TrackingListState extends State<TrackingList> {
   final Stream<QuerySnapshot> _trackingStream =
       FirebaseFirestore.instance.collection("User").snapshots();
   final List _todoList = [];
+
   // text field
   final TextEditingController _textFieldController = TextEditingController();
   // void _addTodoItem(var element) {
@@ -81,7 +83,7 @@ class _TrackingListState extends State<TrackingList> {
               SizedBox(
                   width: MediaQuery.of(context).copyWith().size.width * 0.6,
                   child: Text(
-                    snapshot.data!.data()['email']??'',
+                    snapshot.data!.data()['email'] ?? '',
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                     textAlign: TextAlign.center,
@@ -111,13 +113,58 @@ class _TrackingListState extends State<TrackingList> {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
+          String _error = "";
           return AlertDialog(
             title: const Text('People to share tour with'),
-            content: TextField(
-              controller: _textFieldController,
-              keyboardType: TextInputType.emailAddress,
-              decoration:
-                  const InputDecoration(hintText: 'Enter email for user'),
+            content: SizedBox(
+              height: MediaQuery.of(context).copyWith().size.height * 0.09,
+              child: StatefulBuilder(
+                builder: (context, setState) {
+                  return ListView(
+                    children: [
+                      TextField(
+                        onChanged: (value) async {
+                          
+                          // print(value);
+                          if (Auth().currentUser!.email!.toLowerCase() !=
+                              value.toLowerCase()) {
+                            var results = await firebaseInstance
+                                .collection("User")
+                                .where("email",
+                                    isEqualTo: value.toString().toLowerCase())
+                                .get();
+                            // print(results.docs.isEmpty);
+                            if (results.docs.isEmpty) {
+                              setState(() {
+                                _error = "user does not exist";
+                              });
+                            } else {
+                              setState(() {
+                                _error = "";
+                              });
+                            }
+                          } else {
+                            setState(() {
+                              _error = "you cannot add your account";
+                            });
+                          }
+
+                          // print(results.docs.length);
+                        },
+                        controller: _textFieldController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                            hintText: 'Enter email for user'),
+                      ),
+                      if (_error.isNotEmpty)
+                        Text(
+                          _error,
+                          style: const TextStyle(color: Colors.red),
+                        )
+                    ],
+                  );
+                },
+              ),
             ),
             actions: <Widget>[
               // add button
