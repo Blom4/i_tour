@@ -66,6 +66,7 @@ dependencies:
   restart_app: ^1.1.2
   card_loading: ^0.3.0
   flutter_background_service: ^2.4.6
+  mailer: ^6.0.1
 
 dev_dependencies:
   flutter_test:
