@@ -1,10 +1,8 @@
-import 'dart:async';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Components/ChoosePerson.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Components/Search.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Constants.dart';
-import 'package:search_page/search_page.dart';
 import 'package:weather/weather.dart';
 
 class WeatherForecast extends StatefulWidget {
@@ -64,8 +62,8 @@ class _WeatherForecastState extends State<WeatherForecast> {
                         fontSize: 92,
                         fontWeight: FontWeight.w900),
                   ),
-                  Column(
-                    children: const [
+                  const Column(
+                    children: [
                       Text(
                         "Few Clouds",
                         style: TextStyle(
@@ -88,7 +86,7 @@ class _WeatherForecastState extends State<WeatherForecast> {
             // SizedBox(height: height*0.5,),
             Padding(
               padding: EdgeInsets.only(top: 10, left: width * 0.05),
-              child: Container(
+              child: SizedBox(
                   width: width * 0.9,
                   height: height * 0.2,
                   child: ListView(
@@ -280,7 +278,7 @@ class _WeatherForecastState extends State<WeatherForecast> {
           ],
         ),
         Positioned(
-            left: width * 0.03, top: height * 0.055, child: SearchField()),
+            left: width * 0.03, top: height * 0.055, child: const SearchField()),
         Positioned(
             top: height * 0.05,
             right: width * 0.01,

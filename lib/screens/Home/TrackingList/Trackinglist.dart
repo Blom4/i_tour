@@ -110,11 +110,11 @@ class _TrackingListState extends State<TrackingList> {
   }
 
   List<Widget> _getItems(BuildContext context) {
-    final List<Widget> _todoWidgets = <Widget>[];
+    final List<Widget> todoWidgets = <Widget>[];
     for (String title in _todoList) {
-      _todoWidgets.add(_buildTrackPerson(title, context));
+      todoWidgets.add(_buildTrackPerson(title, context));
     }
-    return _todoWidgets;
+    return todoWidgets;
   }
 
   @override
@@ -163,7 +163,7 @@ class _TrackingListState extends State<TrackingList> {
       ),
       // add items to the to-do list
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Color.fromARGB(255, 48, 125, 145),
+          backgroundColor: const Color.fromARGB(255, 48, 125, 145),
           onPressed: () => _displayDialog(context),
           tooltip: 'Add',
           child: const Icon(Icons.add)),

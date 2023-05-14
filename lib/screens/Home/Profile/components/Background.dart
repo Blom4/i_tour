@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 class Background extends StatefulWidget {
   const Background({super.key});
 
@@ -34,7 +33,6 @@ class _BackgroundState extends State<Background> {
 class Clipper1 extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {
-    // TODO: implement getClip
     var path = Path();
     path.lineTo(size.width, size.height * 0.3);
     path.lineTo(size.width, 0);
@@ -55,7 +53,6 @@ class Clipper1 extends CustomClipper<Path> {
 
   @override
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) {
-    // TODO: implement shouldReclip
     return true;
   }
 }

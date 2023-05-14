@@ -57,9 +57,10 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       body: Center(
         child: SizedBox(
-            height: 200.0,
-            width: 200.0,
-            child: LottieBuilder.asset('assets/animassets/mapanimation.json')),
+          height: 200.0,
+          width: 200.0,
+          child: LottieBuilder.asset('assets/animassets/mapanimation.json'),
+        ),
       ),
     );
   }

@@ -69,25 +69,25 @@ class _HomePageState extends State<HomePage> {
             PersistentBottomNavBarItem(
                 icon: const Icon(CupertinoIcons.map),
                 title: ("Map"),
-                activeColorPrimary: Color.fromARGB(255, 68, 204, 214),
+                activeColorPrimary: const Color.fromARGB(255, 68, 204, 214),
                 inactiveColorPrimary: CupertinoColors.systemGrey,
             ),
             PersistentBottomNavBarItem(
                 icon: const Icon(CupertinoIcons.cloud_rain),
                 title: ("Weather"),
-                activeColorPrimary: Color.fromARGB(255, 88, 40, 128),
+                activeColorPrimary: const Color.fromARGB(255, 88, 40, 128),
                 inactiveColorPrimary: CupertinoColors.systemGrey,
             ),
             PersistentBottomNavBarItem(
                 icon: const Icon(CupertinoIcons.train_style_one),
                 title: ("Transport"),
-                activeColorPrimary: Color.fromARGB(255, 24, 110, 39),
+                activeColorPrimary: const Color.fromARGB(255, 24, 110, 39),
                 inactiveColorPrimary: CupertinoColors.systemGrey,
             ),
             PersistentBottomNavBarItem(
                 icon: const Icon(CupertinoIcons.profile_circled),
                 title: ("Profile"),
-                activeColorPrimary: Color.fromARGB(255, 216, 138, 20),
+                activeColorPrimary: const Color.fromARGB(255, 216, 138, 20),
                 inactiveColorPrimary: CupertinoColors.systemGrey,
             ),
         ];
