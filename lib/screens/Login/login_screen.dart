@@ -85,12 +85,7 @@ class _LoginScreen extends State<LoginScreen> {
                                 controller: emailController,
                                 decoration: const InputDecoration(
                                   labelText: "Email Address",
-                                  // enabledBorder: OutlineInputBorder(
-                                  //   borderSide: BorderSide(),
-                                  // ),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //   borderSide: BorderSide(),
-                                  // ),
+                              
                                 ),
                               ),
                               const SizedBox(

@@ -17,7 +17,12 @@ class _TrackingListState extends State<TrackingList> {
   final Stream<QuerySnapshot> _trackingStream =
       FirebaseFirestore.instance.collection("User").snapshots();
   final List _todoList = [];
-
+  bool isLoading = false;
+  final loader = const SpinKitFoldingCube(
+    color: Color.fromARGB(255, 35, 104, 136),
+    size: 150,
+    // duration: Duration(milliseconds: 1000),
+  );
   // text field
   final TextEditingController _textFieldController = TextEditingController();
   // void _addTodoItem(var element) {
@@ -93,8 +98,10 @@ class _TrackingListState extends State<TrackingList> {
                 padding: EdgeInsets.only(
                     right: MediaQuery.of(context).copyWith().size.width * 0.05),
                 child: GestureDetector(
-                  onTap: () {
-                    print("pressed");
+                  onTap: () async {
+                    await TrackingLogic.removePerson(
+                        user: snapshot.data!.data()['email'] ?? '');
+                    // print("pressed");
                   },
                   child: const Icon(
                     Icons.delete_forever,
@@ -111,11 +118,13 @@ class _TrackingListState extends State<TrackingList> {
 
   Future _displayDialog(BuildContext context) async {
     // alter the app state to show a dialog
+
     return showDialog(
         context: context,
         builder: (BuildContext context) {
           String _error = "";
           bool isFound = false;
+
           return AlertDialog(
             title: const Text('People to share tour with'),
             content: SizedBox(
@@ -127,9 +136,14 @@ class _TrackingListState extends State<TrackingList> {
                       TextField(
                         onChanged: (value) async {
                           // print(value);
-
+                          setState(
+                            () {
+                              isLoading = true;
+                            },
+                          );
                           if (Auth().currentUser!.email!.toLowerCase() !=
                               value.toLowerCase()) {
+                            // search for current auth user
                             var results = await firebaseInstance
                                 .collection("User")
                                 .where("email",
@@ -143,6 +157,7 @@ class _TrackingListState extends State<TrackingList> {
                             } else {
                               // var data1 = results.docs.first.data();
                               // print(results.docs.first);
+                              //search for current auth user then check monitor users if they exist
                               var res = await firebaseInstance
                                   .collection("User")
                                   .where("email",
@@ -155,7 +170,7 @@ class _TrackingListState extends State<TrackingList> {
                               // var data2 =
                               //     await res.docs.first.data()['monitor'];
                               for (var element
-                                  in res.docs.first.data()['monitor']??[]) {
+                                  in res.docs.first.data()['monitor'] ?? []) {
                                 data = await element.get();
                                 if (results.docs.first.data()['email'] ==
                                     data.data()['email']) {
@@ -204,14 +219,23 @@ class _TrackingListState extends State<TrackingList> {
             actions: <Widget>[
               // add button
               TextButton(
-                onPressed: () async {
-                  // print(isFound);
-                  await TrackingLogic.addTrackingUser(
-                      user: _textFieldController.text.trim().toLowerCase(),
-                      isFound: isFound);
-                  Navigator.of(context).pop();
-                },
-                child: const Text('ADD'),
+                onPressed: isLoading
+                    ? () {}
+                    : () async {
+                        // print(isFound);
+                        setState(() {
+                          isLoading = true;
+                        });
+                        await TrackingLogic.addTrackingUser(
+                            user:
+                                _textFieldController.text.trim().toLowerCase(),
+                            isFound: isFound);
+                        setState(() {
+                          isLoading = false;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                child: isLoading ? const Text("waiting") : const Text('ADD'),
               ),
               // cancel button
               TextButton(
@@ -304,8 +328,8 @@ class _TrackingListState extends State<TrackingList> {
                     top: MediaQuery.of(context).copyWith().size.height * 0.3,
                     bottom:
                         MediaQuery.of(context).copyWith().size.height * 0.1),
-                child:
-                    ListView(children: _getItems(context, document['monitor']??[])),
+                child: ListView(
+                    children: _getItems(context, document['monitor'] ?? [])),
               );
             },
           ),

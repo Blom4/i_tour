@@ -13,6 +13,7 @@ class EmailCode {
   static Future sendEmailToOnePerson(
       {required String to,
       required String info,
+      required String header,
       required String subject}) async {
     final message = Message()
       ..from = Address(_email_username, 'Malefetsane Shelile')
@@ -21,7 +22,7 @@ class EmailCode {
       // ..bccRecipients.add(Address('bccAddress@example.com'))
       ..subject = subject
       // ..text = 'This is the plain text.\nThis is line 2 of the text part.'
-      ..html = "<h1>Test</h1>\n<p>$info</p>";
+      ..html = "<h1>$header</h1>\n<p>$info</p>";
 
     try {
       final sendReport = await send(message, _smtpServer);
