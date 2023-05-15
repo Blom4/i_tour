@@ -31,7 +31,6 @@ dependencies:
   flutter:
     sdk: flutter
 
-
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -40,7 +39,7 @@ dependencies:
   dartz:
   google_maps_flutter:
   flutter_riverpod:
-  fab_circular_menu:
+  #fab_circular_menu:
   flutter_polyline_points:
   flutter_rating_stars:
   flip_card:
@@ -78,7 +77,6 @@ dev_dependencies:
 
 # The following section is specific to Flutter packages.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

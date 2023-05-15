@@ -9,11 +9,11 @@ class LoginScreen extends ConsumerWidget {
 
   //TextEditingController emailController = TextEditingController();
   //TextEditingController passwordController = TextEditingController();
-
+  //(int a, int b) fun(int a , int b) =>(a, b);
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final width = MediaQuery.of(context).copyWith().size.width;
-    final height = MediaQuery.of(context).copyWith().size.height;
+    final width = MediaQuery.of(context).size.width;
+    //final height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Stack(
         children: [

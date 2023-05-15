@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -220,175 +219,147 @@ class _MapsState extends ConsumerState<Maps> {
     final searchFlag = ref.watch(searchToggleProvider);
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Stack(
-              children: [
-                SizedBox(
-                  height: screenHeight,
-                  width: screenWidth,
-                  child: GoogleMap(
-                    mapType: MapType.normal,
-                    markers: _markers,
-                    polylines: _polylines,
-                    circles: _circles,
-                    initialCameraPosition: _kGooglePlex,
-                    onMapCreated: (GoogleMapController controller) async {
-                      _controller.complete(controller);
-                      await _findMyLoction();
-                    },
-                    onTap: (point) {
-                      tappedPoint = point;
-                      _setCircle(point);
-                    },
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              Stack(
+                children: [
+                  SizedBox(
+                    height: screenHeight,
+                    width: screenWidth,
+                    child: GoogleMap(
+                      mapType: MapType.normal,
+                      markers: _markers,
+                      polylines: _polylines,
+                      circles: _circles,
+                      initialCameraPosition: _kGooglePlex,
+                      onMapCreated: (GoogleMapController controller) async {
+                        _controller.complete(controller);
+                        await _findMyLoction();
+                      },
+                      onTap: (point) {
+                        tappedPoint = point;
+                        _setCircle(point);
+                      },
+                    ),
                   ),
-                ),
-                if (searchToggle)
-                  SearchPlacesWidget(
-                    controller: searchController,
-                    onPressed: () {
-                      setState(() {
-                        searchToggle = false;
+                  if (searchToggle)
+                    SearchPlacesWidget(
+                      controller: searchController,
+                      onPressed: () {
+                        setState(() {
+                          searchToggle = false;
 
-                        searchController.text = '';
-                        _markers = {};
-                        if (searchFlag.searchToggle) {
-                          searchFlag.toggleSearch();
-                        }
-                      });
-                    },
-                    onChanged: (value) {
-                      if (_debounce?.isActive ?? false) {
-                        _debounce?.cancel();
-                      }
-                      _debounce = Timer(
-                        const Duration(milliseconds: 700),
-                        () async {
-                          if (value.length > 2) {
-                            if (!searchFlag.searchToggle) {
-                              searchFlag.toggleSearch();
-                              _markers = {};
-                            }
-
-                            List<AutoCompleteResult> searchResults =
-                                await MapServices().searchPlaces(value);
-
-                            allSearchResults.setResults(searchResults);
-                          } else {
-                            List<AutoCompleteResult> emptyList = [];
-                            allSearchResults.setResults(emptyList);
-                          }
-                        },
-                      );
-                    },
-                  ),
-                if (searchFlag.searchToggle)
-                  if (allSearchResults.allReturnedResults.isNotEmpty)
-                    Positioned(
-                        top: 100.0,
-                        left: 15.0,
-                        child: Container(
-                          height: 200.0,
-                          width: screenWidth - 30.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            color: Colors.white.withOpacity(0.7),
-                          ),
-                          child: ListView(
-                            children: [
-                              ...allSearchResults.allReturnedResults
-                                  .map((e) => buildListItem(e, searchFlag))
-                            ],
-                          ),
-                        ))
-                  else
-                    const NoResultsWidget(),
-                if (getDirections)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(15.0, 40.0, 15.0, 5),
-                    child: Column(children: [
-                      OriginFieldWidget(
-                        controller: _originController,
-                      ),
-                      const SizedBox(height: 3.0),
-                      DestinationFieldWidget(
-                        controller: _destinationController,
-                        onSearchPressed: () async {
-                          var directions = await MapServices().getDirections(
-                              _originController.text,
-                              _destinationController.text);
+                          searchController.text = '';
                           _markers = {};
-                          _polylines = {};
-                          gotoPlace(
-                              directions['start_location']['lat'],
-                              directions['start_location']['lng'],
-                              directions['end_location']['lat'],
-                              directions['end_location']['lng'],
-                              directions['bounds_ne'],
-                              directions['bounds_sw']);
-                          _setPolyline(directions['polyline_decoded']);
-                        },
-                        onClosePressed: () {
-                          setState(() {
-                            getDirections = false;
-                            _originController.text = '';
-                            _destinationController.text = '';
+                          if (searchFlag.searchToggle) {
+                            searchFlag.toggleSearch();
+                          }
+                        });
+                      },
+                      onChanged: (value) {
+                        if (_debounce?.isActive ?? false) {
+                          _debounce?.cancel();
+                        }
+                        _debounce = Timer(
+                          const Duration(milliseconds: 700),
+                          () async {
+                            if (value.length > 2) {
+                              if (!searchFlag.searchToggle) {
+                                searchFlag.toggleSearch();
+                                _markers = {};
+                              }
+
+                              List<AutoCompleteResult> searchResults =
+                                  await MapServices().searchPlaces(value);
+
+                              allSearchResults.setResults(searchResults);
+                            } else {
+                              List<AutoCompleteResult> emptyList = [];
+                              allSearchResults.setResults(emptyList);
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  if (searchFlag.searchToggle)
+                    if (allSearchResults.allReturnedResults.isNotEmpty)
+                      Positioned(
+                          top: 100.0,
+                          left: 15.0,
+                          child: Container(
+                            height: 200.0,
+                            width: screenWidth - 30.0,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10.0),
+                              color: Colors.white.withOpacity(0.7),
+                            ),
+                            child: ListView(
+                              children: [
+                                ...allSearchResults.allReturnedResults
+                                    .map((e) => buildListItem(e, searchFlag))
+                              ],
+                            ),
+                          ))
+                    else
+                      const NoResultsWidget(),
+                  if (getDirections)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15.0, 40.0, 15.0, 5),
+                      child: Column(children: [
+                        OriginFieldWidget(
+                          controller: _originController,
+                        ),
+                        const SizedBox(height: 3.0),
+                        DestinationFieldWidget(
+                          controller: _destinationController,
+                          onSearchPressed: () async {
+                            var directions = await MapServices().getDirections(
+                                _originController.text,
+                                _destinationController.text);
                             _markers = {};
                             _polylines = {};
-                          });
-                        },
-                      )
-                    ]),
-                  ),
-                if (radiusSlider)
-                  NearMePlacesWidget(
-                    radiusValue: radiusValue,
-                    pressedNear: pressedNear,
-                    onNearMePressed: () {
-                      if (_debounce?.isActive ?? false) {
-                        _debounce?.cancel();
-                      }
-                      _debounce = Timer(const Duration(seconds: 2), () async {
-                        var placesResult = await MapServices()
-                            .getPlaceDetails(tappedPoint, radiusValue.toInt());
-
-                        List<dynamic> placesWithin =
-                            placesResult['results'] as List;
-
-                        allFavoritePlaces = placesWithin;
-
-                        tokenKey = placesResult['next_page_token'] ?? 'none';
-                        _markers = {};
-                        for (var element in placesWithin) {
-                          _setNearMarker(
-                            LatLng(element['geometry']['location']['lat'],
-                                element['geometry']['location']['lng']),
-                            element['name'],
-                            element['types'],
-                            element['business_status'] ?? 'not available',
-                          );
+                            gotoPlace(
+                                directions['start_location']['lat'],
+                                directions['start_location']['lng'],
+                                directions['end_location']['lat'],
+                                directions['end_location']['lng'],
+                                directions['bounds_ne'],
+                                directions['bounds_sw']);
+                            _setPolyline(directions['polyline_decoded']);
+                          },
+                          onClosePressed: () {
+                            setState(() {
+                              getDirections = false;
+                              _originController.text = '';
+                              _destinationController.text = '';
+                              _markers = {};
+                              _polylines = {};
+                            });
+                          },
+                        )
+                      ]),
+                    ),
+                  if (radiusSlider)
+                    NearMePlacesWidget(
+                      radiusValue: radiusValue,
+                      pressedNear: pressedNear,
+                      onNearMePressed: () {
+                        if (_debounce?.isActive ?? false) {
+                          _debounce?.cancel();
                         }
-                        _markersDupe = _markers;
-                        pressedNear = true;
-                      });
-                    },
-                    onMorePlacesPressed: () {
-                      if (_debounce?.isActive ?? false) {
-                        _debounce?.cancel();
-                      }
-                      _debounce = Timer(const Duration(seconds: 2), () async {
-                        if (tokenKey != 'none') {
-                          var placesResult =
-                              await MapServices().getMorePlaceDetails(tokenKey);
+                        _debounce = Timer(const Duration(seconds: 2), () async {
+                          var placesResult = await MapServices()
+                              .getPlaceDetails(
+                                  tappedPoint, radiusValue.toInt());
 
                           List<dynamic> placesWithin =
                               placesResult['results'] as List;
 
-                          allFavoritePlaces.addAll(placesWithin);
+                          allFavoritePlaces = placesWithin;
 
                           tokenKey = placesResult['next_page_token'] ?? 'none';
-
+                          _markers = {};
                           for (var element in placesWithin) {
                             _setNearMarker(
                               LatLng(element['geometry']['location']['lat'],
@@ -398,62 +369,85 @@ class _MapsState extends ConsumerState<Maps> {
                               element['business_status'] ?? 'not available',
                             );
                           }
-                        } else {
-                          debugPrint('Thats all folks!!');
+                          _markersDupe = _markers;
+                          pressedNear = true;
+                        });
+                      },
+                      onMorePlacesPressed: () {
+                        if (_debounce?.isActive ?? false) {
+                          _debounce?.cancel();
                         }
-                      });
-                    },
-                    onSliderChanged: (newVal) {
-                      radiusValue = newVal;
-                      pressedNear = false;
-                      _setCircle(tappedPoint);
-                    },
-                    onClosePressed: () {
-                      setState(
-                        () {
-                          radiusSlider = false;
-                          pressedNear = false;
-                          cardTapped = false;
-                          radiusValue = 3000.0;
-                          _circles = {};
-                          _markers = {};
-                          allFavoritePlaces = [];
-                        },
-                      );
-                    },
-                  ),
-                if (pressedNear)
-                  Positioned(
-                      bottom: 20.0,
-                      child: SizedBox(
-                        height: 200.0,
-                        width: MediaQuery.of(context).size.width,
-                        child: PageView.builder(
-                            controller: _pageController,
-                            itemCount: allFavoritePlaces.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return _nearbyPlacesList(index);
-                            }),
-                      )),
-                if (cardTapped)
-                  Positioned(
-                    top: 100.0,
-                    left: 15.0,
-                    child: _myFlipCard(),
-                  )
-              ],
-            )
-          ],
+                        _debounce = Timer(const Duration(seconds: 2), () async {
+                          if (tokenKey != 'none') {
+                            var placesResult = await MapServices()
+                                .getMorePlaceDetails(tokenKey);
+
+                            List<dynamic> placesWithin =
+                                placesResult['results'] as List;
+
+                            allFavoritePlaces.addAll(placesWithin);
+
+                            tokenKey =
+                                placesResult['next_page_token'] ?? 'none';
+
+                            for (var element in placesWithin) {
+                              _setNearMarker(
+                                LatLng(element['geometry']['location']['lat'],
+                                    element['geometry']['location']['lng']),
+                                element['name'],
+                                element['types'],
+                                element['business_status'] ?? 'not available',
+                              );
+                            }
+                          } else {
+                            debugPrint('Thats all folks!!');
+                          }
+                        });
+                      },
+                      onSliderChanged: (newVal) {
+                        radiusValue = newVal;
+                        pressedNear = false;
+                        _setCircle(tappedPoint);
+                      },
+                      onClosePressed: () {
+                        setState(
+                          () {
+                            radiusSlider = false;
+                            pressedNear = false;
+                            cardTapped = false;
+                            radiusValue = 3000.0;
+                            _circles = {};
+                            _markers = {};
+                            allFavoritePlaces = [];
+                          },
+                        );
+                      },
+                    ),
+                  if (pressedNear)
+                    Positioned(
+                        bottom: 20.0,
+                        child: SizedBox(
+                          height: 200.0,
+                          width: MediaQuery.of(context).size.width,
+                          child: PageView.builder(
+                              controller: _pageController,
+                              itemCount: allFavoritePlaces.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return _nearbyPlacesList(index);
+                              }),
+                        )),
+                  if (cardTapped)
+                    Positioned(
+                      top: 100.0,
+                      left: 15.0,
+                      child: _myFlipCard(),
+                    )
+                ],
+              )
+            ],
+          ),
         ),
-      ),
-      floatingActionButton: FabCircularMenu(
-          alignment: Alignment.bottomLeft,
-          fabColor: Colors.blue.shade50,
-          fabOpenColor: Colors.red.shade100,
-          ringDiameter: 250.0,
-          ringWidth: 60.0,
-          ringColor: Colors.blue.shade50,
-          fabSize: 60.0,
+        floatingActionButton: Column(
           children: [
             IconButton(
                 onPressed: () {
@@ -467,18 +461,19 @@ class _MapsState extends ConsumerState<Maps> {
                 },
                 icon: const Icon(Icons.search)),
             IconButton(
-                onPressed: () {
-                  setState(() {
-                    searchToggle = false;
-                    radiusSlider = false;
-                    pressedNear = false;
-                    cardTapped = false;
-                    getDirections = true;
-                  });
-                },
-                icon: const Icon(Icons.navigation))
-          ]),
-    );
+              onPressed: () {
+                setState(() {
+                  searchToggle = false;
+                  radiusSlider = false;
+                  pressedNear = false;
+                  cardTapped = false;
+                  getDirections = true;
+                });
+              },
+              icon: const Icon(Icons.navigation),
+            )
+          ],
+        ));
   }
 
   FlipCard _myFlipCard() {
