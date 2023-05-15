@@ -25,6 +25,7 @@ class _WeatherForecastState extends State<WeatherForecast> {
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).copyWith().size.width;
     final height = MediaQuery.of(context).copyWith().size.height;
+    // print(Auth().currentUser!.email);
     return Stack(
       children: [
         Wrap(

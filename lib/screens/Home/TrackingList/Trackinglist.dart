@@ -1,5 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:i_tour/constants/constants.dart';
+import 'package:i_tour/logic/firebase_auth.dart';
+import 'package:i_tour/screens/Home/TrackingList/Logic/Tracking_logic.dart';
 
 class TrackingList extends StatefulWidget {
   const TrackingList({super.key});
@@ -9,93 +14,228 @@ class TrackingList extends StatefulWidget {
 }
 
 class _TrackingListState extends State<TrackingList> {
-  final List<String> _todoList = <String>[];
+  final Stream<QuerySnapshot> _trackingStream =
+      FirebaseFirestore.instance.collection("User").snapshots();
+  final List _todoList = [];
+  bool isLoading = false;
+  final loader = const SpinKitFoldingCube(
+    color: Color.fromARGB(255, 35, 104, 136),
+    size: 150,
+    // duration: Duration(milliseconds: 1000),
+  );
   // text field
   final TextEditingController _textFieldController = TextEditingController();
-  void _addTodoItem(String title) {
-    //  a set state will notify the app that the state has changed
-    setState(() {
-      _todoList.add(title);
-    });
-    _textFieldController.clear();
-  }
+  // void _addTodoItem(var element) {
+  //   //  a set state will notify the app that the state has changed
+  //   setState(() {
+  //     _todoList.add(element);
+  //   });
+  //   _textFieldController.clear();
+  // }
 
-  Widget _buildTrackPerson(String title, BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.all(10),
-      width: MediaQuery.of(context).copyWith().size.width * 0.9,
-      height: MediaQuery.of(context).copyWith().size.height * 0.1,
-      decoration: const BoxDecoration(
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(2, 5),
-                color: Color.fromARGB(255, 202, 197, 197),
-                blurRadius: 0.1,
-                spreadRadius: 0.4)
-          ],
-          color: Color.fromARGB(255, 255, 252, 255),
-          borderRadius: BorderRadius.all(Radius.circular(15))),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // SizedBox(width: MediaQuery.of(context).copyWith().size.width*0.01,),
-          Padding(
-            padding: EdgeInsets.only(
-                left: MediaQuery.of(context).copyWith().size.width * 0.05),
-            child: CircleAvatar(
-              backgroundColor: Colors.white,
-              child: Image.asset(
-                "assets/pinPeople.png",
-                width: MediaQuery.of(context).copyWith().size.width * 1,
+  Widget _buildTrackPerson(var element, BuildContext context) {
+    return StreamBuilder(
+      stream: element.snapshots(),
+      builder: (context, AsyncSnapshot snapshot) {
+        if (snapshot.hasError) {
+          return const Text('Something went wrong');
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Padding(
+              padding: EdgeInsets.only(
+                top: MediaQuery.of(context).copyWith().size.height * 0.3,
+                // left: MediaQuery.of(context).copyWith().size.width * 0.5
               ),
-            ),
+              child: const SpinKitFoldingCube(
+                color: Colors.blue,
+                size: 80,
+                // duration: Duration(milliseconds: 1000),
+              ));
+        }
+        if (!snapshot.hasData || snapshot.data!.data().isEmpty) {
+          return const SizedBox();
+        }
+        // print(snapshot.data!.data()['auth_id']??"");
+        return Container(
+          margin: const EdgeInsets.all(10),
+          width: MediaQuery.of(context).copyWith().size.width * 0.9,
+          height: MediaQuery.of(context).copyWith().size.height * 0.1,
+          decoration: const BoxDecoration(
+              boxShadow: [
+                BoxShadow(
+                    offset: Offset(2, 5),
+                    color: Color.fromARGB(255, 202, 197, 197),
+                    blurRadius: 0.1,
+                    spreadRadius: 0.4)
+              ],
+              color: Color.fromARGB(255, 255, 252, 255),
+              borderRadius: BorderRadius.all(Radius.circular(15))),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // SizedBox(width: MediaQuery.of(context).copyWith().size.width*0.01,),
+              Padding(
+                padding: EdgeInsets.only(
+                    left: MediaQuery.of(context).copyWith().size.width * 0.05),
+                child: CircleAvatar(
+                  backgroundColor: Colors.white,
+                  child: Image.asset(
+                    "assets/pinPeople.png",
+                    width: MediaQuery.of(context).copyWith().size.width * 1,
+                  ),
+                ),
+              ),
+              SizedBox(
+                  width: MediaQuery.of(context).copyWith().size.width * 0.6,
+                  child: Text(
+                    snapshot.data!.data()['email'] ?? '',
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    textAlign: TextAlign.center,
+                  )),
+              Padding(
+                padding: EdgeInsets.only(
+                    right: MediaQuery.of(context).copyWith().size.width * 0.05),
+                child: GestureDetector(
+                  onTap: () async {
+                    await TrackingLogic.removePerson(
+                        user: snapshot.data!.data()['email'] ?? '');
+                    // print("pressed");
+                  },
+                  child: const Icon(
+                    Icons.delete_forever,
+                    color: Colors.red,
+                  ),
+                ),
+              )
+            ],
           ),
-          SizedBox(
-              width: MediaQuery.of(context).copyWith().size.width * 0.6,
-              child: Text(
-                title,
-                overflow: TextOverflow.ellipsis,
-                maxLines: 1,
-                textAlign: TextAlign.center,
-              )),
-          Padding(
-            padding: EdgeInsets.only(
-                right: MediaQuery.of(context).copyWith().size.width * 0.05),
-            child: GestureDetector(
-              onTap: () {
-                print("pressed");
-              },
-              child: const Icon(
-                Icons.delete_forever,
-                color: Colors.red,
-              ),
-            ),
-          )
-        ],
-      ),
+        );
+      },
     );
   }
 
   Future _displayDialog(BuildContext context) async {
     // alter the app state to show a dialog
+
     return showDialog(
         context: context,
         builder: (BuildContext context) {
+          String error = "";
+          bool isFound = false;
+
           return AlertDialog(
             title: const Text('People to share tour with'),
-            content: TextField(
-              controller: _textFieldController,
-              keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(hintText: 'Enter email for user'),
+            content: SizedBox(
+              height: MediaQuery.of(context).copyWith().size.height * 0.09,
+              child: StatefulBuilder(
+                builder: (context, setState) {
+                  return ListView(
+                    children: [
+                      TextField(
+                        onChanged: (value) async {
+                          // print(value);
+                          setState(
+                            () {
+                              isLoading = true;
+                            },
+                          );
+                          if (Auth().currentUser!.email!.toLowerCase() !=
+                              value.toLowerCase()) {
+                            // search for current auth user
+                            var results = await firebaseInstance
+                                .collection("User")
+                                .where("email",
+                                    isEqualTo: value.toString().toLowerCase())
+                                .get();
+                            // print(results.docs.isEmpty);
+                            if (results.docs.isEmpty) {
+                              setState(() {
+                                error = "user does not exist";
+                              });
+                            } else {
+                              // var data1 = results.docs.first.data();
+                              // print(results.docs.first);
+                              //search for current auth user then check monitor users if they exist
+                              var res = await firebaseInstance
+                                  .collection("User")
+                                  .where("email",
+                                      isEqualTo: Auth()
+                                          .currentUser!
+                                          .email!
+                                          .toLowerCase())
+                                  .get();
+                              var data;
+                              // var data2 =
+                              //     await res.docs.first.data()['monitor'];
+                              for (var element
+                                  in res.docs.first.data()['monitor'] ?? []) {
+                                data = await element.get();
+                                if (results.docs.first.data()['email'] ==
+                                    data.data()['email']) {
+                                  isFound = true;
+                                  break;
+                                }
+                              }
+
+                              // print(res.docs.first.data());
+                              if (isFound) {
+                                setState(() {
+                                  isFound = true;
+                                  error = "You have added user";
+                                });
+                              } else {
+                                setState(() {
+                                  isFound = false;
+                                  error = "";
+                                });
+                              }
+                            }
+                          } else {
+                            setState(() {
+                              isFound = true;
+                              error = "you cannot add your account";
+                            });
+                          }
+
+                          // print(results.docs.length);
+                        },
+                        controller: _textFieldController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: const InputDecoration(
+                            hintText: 'Enter email for user'),
+                      ),
+                      if (error.isNotEmpty)
+                        Text(
+                          error,
+                          style: const TextStyle(color: Colors.red),
+                        )
+                    ],
+                  );
+                },
+              ),
             ),
             actions: <Widget>[
               // add button
               TextButton(
-                child: const Text('ADD'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _addTodoItem(_textFieldController.text);
-                },
+                onPressed: isLoading
+                    ? () {}
+                    : () async {
+                        // print(isFound);
+                        setState(() {
+                          isLoading = true;
+                        });
+                        await TrackingLogic.addTrackingUser(
+                            user:
+                                _textFieldController.text.trim().toLowerCase(),
+                            isFound: isFound);
+                        setState(() {
+                          isLoading = false;
+                        });
+                        Navigator.of(context).pop();
+                      },
+                child: isLoading ? const Text("waiting") : const Text('ADD'),
               ),
               // cancel button
               TextButton(
@@ -109,10 +249,17 @@ class _TrackingListState extends State<TrackingList> {
         });
   }
 
+<<<<<<< HEAD
   List<Widget> _getItems(BuildContext context) {
     final List<Widget> todoWidgets = <Widget>[];
     for (String title in _todoList) {
       todoWidgets.add(_buildTrackPerson(title, context));
+=======
+  List<Widget> _getItems(BuildContext context, var data) {
+    final List<Widget> todoWidgets = <Widget>[];
+    for (var element in data) {
+      todoWidgets.add(_buildTrackPerson(element, context));
+>>>>>>> ntateshelile
     }
     return todoWidgets;
   }
@@ -147,17 +294,51 @@ class _TrackingListState extends State<TrackingList> {
                 SizedBox(
                     width: MediaQuery.of(context).copyWith().size.width * 0.4,
                     child: Text(
-                      "Remember to add people you want to share your tour with.".toUpperCase(),
-                      style: const TextStyle(color: Colors.white,fontWeight: FontWeight.w900,fontSize: 15),
+                      "Remember to add people you want to share your tour with."
+                          .toUpperCase(),
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 15),
                     ))
               ],
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(
-                top: MediaQuery.of(context).copyWith().size.height * 0.3,
-                bottom: MediaQuery.of(context).copyWith().size.height * 0.1),
-            child: ListView(children: _getItems(context)),
+          StreamBuilder<QuerySnapshot>(
+            stream: _trackingStream,
+            builder:
+                (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+              if (snapshot.hasError) {
+                return const Text('Something went wrong');
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Padding(
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).copyWith().size.height * 0.3,
+                      // left: MediaQuery.of(context).copyWith().size.width * 0.5
+                    ),
+                    child: const SpinKitFoldingCube(
+                      color: Colors.blue,
+                      size: 80,
+                      // duration: Duration(milliseconds: 1000),
+                    ));
+              }
+              if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                return const SizedBox();
+              }
+              final document = snapshot.data!.docs.firstWhere(
+                  (element) => element['auth_id'] == Auth().currentUser!.uid);
+              // print(document['monitor'][0]);
+              return Padding(
+                padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).copyWith().size.height * 0.3,
+                    bottom:
+                        MediaQuery.of(context).copyWith().size.height * 0.1),
+                child: ListView(
+                    children: _getItems(context, document['monitor'] ?? [])),
+              );
+            },
           ),
         ],
       ),
