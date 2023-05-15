@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-=======
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:i_tour/logic/firebase_auth.dart';
->>>>>>> ntateshelile
 import 'package:i_tour/screens/Login/login_screen.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
 
@@ -20,7 +17,7 @@ class _RegistrationState extends State<Registration> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final repasswordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+
   bool isObscure = true;
   bool isLoading = false;
   var error = '';
@@ -53,129 +50,6 @@ class _RegistrationState extends State<Registration> {
                 width: width * 0.6,
               ),
             ),
-<<<<<<< HEAD
-            Container(
-              padding: EdgeInsets.only(left: width * 0.1, top: height * 0.03),
-              width: width * 0.85,
-              child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      TextFormField(
-                        controller: nameController,
-                        decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            labelStyle: TextStyle(
-                                color: Color.fromARGB(255, 38, 86, 114)),
-                            prefixIcon: Icon(
-                              Icons.person,
-                              color: Colors.brown,
-                            ),
-                            labelText: "Full Names"),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      TextFormField(
-                        controller: emailController,
-                        decoration: const InputDecoration(
-                          border: UnderlineInputBorder(),
-                          labelStyle: TextStyle(
-                              color: Color.fromARGB(255, 38, 86, 114)),
-                          prefixIcon: Icon(
-                            Icons.email_rounded,
-                            color: Colors.brown,
-                          ),
-                          labelText: "Email Address",
-                        ),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      TextFormField(
-                        controller: passwordController,
-                        obscureText: isObscure,
-                        decoration: InputDecoration(
-                          border: const UnderlineInputBorder(),
-                          labelStyle: const TextStyle(
-                              color: Color.fromARGB(255, 38, 86, 114)),
-                          prefixIcon: const Icon(
-                            Icons.lock,
-                            color: Colors.brown,
-                          ),
-                          suffixIcon: IconButton(
-                            icon: Icon(isObscure
-                                ? Icons.visibility
-                                : Icons.visibility_off),
-                            onPressed: () {
-                              setState(() {
-                                isObscure = !isObscure;
-                              });
-                            },
-                          ),
-                          labelText: "Password***",
-                        ),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      TextFormField(
-                        controller: repasswordController,
-                        obscureText: isObscure,
-                        decoration: InputDecoration(
-                            border: const UnderlineInputBorder(),
-                            labelStyle: const TextStyle(
-                                color: Color.fromARGB(255, 38, 86, 114)),
-                            prefixIcon: const Icon(
-                              Icons.lock_open,
-                              color: Colors.brown,
-                            ),
-                            suffixIcon: IconButton(
-                              icon: Icon(isObscure
-                                  ? Icons.visibility
-                                  : Icons.visibility_off),
-                              onPressed: () {
-                                setState(() {
-                                  isObscure = !isObscure;
-                                });
-                              },
-                            ),
-                            labelText: "Confirm Password***"),
-                      ),
-                      SizedBox(
-                        height: height * 0.02,
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(left: width * 0.52),
-                          child: TextButton(
-                              style: TextButton.styleFrom(
-                                backgroundColor:
-                                    const Color.fromARGB(255, 45, 183, 207),
-                              ),
-                              onPressed: () {},
-                              child: const Text(
-                                "Create",
-                                style: TextStyle(color: Colors.white),
-                              ))),
-                      SizedBox(
-                        height: height * 0.01,
-                      ),
-                      Center(
-                          child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(context, MaterialPageRoute(
-                                  builder: (context) {
-                                    return const LoginScreen();
-                                  },
-                                ));
-                              },
-                              child: const Text("Alread have Account? Login")))
-                    ],
-                  )),
-            ),
-=======
             isLoading
                 ? Padding(
                     padding: EdgeInsets.only(
@@ -387,7 +261,6 @@ class _RegistrationState extends State<Registration> {
                           ],
                         )),
                   ),
->>>>>>> ntateshelile
           ],
         ),
       ),

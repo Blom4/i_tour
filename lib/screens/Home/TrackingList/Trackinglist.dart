@@ -249,17 +249,10 @@ class _TrackingListState extends State<TrackingList> {
         });
   }
 
-<<<<<<< HEAD
-  List<Widget> _getItems(BuildContext context) {
-    final List<Widget> todoWidgets = <Widget>[];
-    for (String title in _todoList) {
-      todoWidgets.add(_buildTrackPerson(title, context));
-=======
   List<Widget> _getItems(BuildContext context, var data) {
     final List<Widget> todoWidgets = <Widget>[];
     for (var element in data) {
       todoWidgets.add(_buildTrackPerson(element, context));
->>>>>>> ntateshelile
     }
     return todoWidgets;
   }

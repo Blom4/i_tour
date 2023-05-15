@@ -1,30 +1,14 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:i_tour/screens/Home/HomePage/HomePage.dart';
-import 'package:i_tour/screens/Login/background.dart';
-import 'package:i_tour/screens/Registration/Registration.dart';
-=======
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:i_tour/logic/firebase_auth.dart';
 import 'package:i_tour/screens/Home/HomePage/HomePage.dart';
 import 'package:i_tour/screens/Login/background.dart';
 import 'package:i_tour/screens/Registration/Registration.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
->>>>>>> ntateshelile
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
-<<<<<<< HEAD
-  //TextEditingController emailController = TextEditingController();
-  //TextEditingController passwordController = TextEditingController();
-  //(int a, int b) fun(int a , int b) =>(a, b);
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final width = MediaQuery.of(context).size.width;
-    //final height = MediaQuery.of(context).size.height;
-=======
   @override
   State<LoginScreen> createState() => _LoginScreen();
 }
@@ -50,8 +34,7 @@ class _LoginScreen extends State<LoginScreen> {
       ),
     );
     final width = MediaQuery.of(context).copyWith().size.width;
-    final height = MediaQuery.of(context).copyWith().size.height;
->>>>>>> ntateshelile
+    //final height = MediaQuery.of(context).copyWith().size.height;
     return Scaffold(
       body: Stack(
         children: [
@@ -99,7 +82,6 @@ class _LoginScreen extends State<LoginScreen> {
                                 controller: emailController,
                                 decoration: const InputDecoration(
                                   labelText: "Email Address",
-                              
                                 ),
                               ),
                               const SizedBox(
@@ -137,8 +119,8 @@ class _LoginScreen extends State<LoginScreen> {
                               //login button
                               TextButton(
                                 style: TextButton.styleFrom(
-                                    backgroundColor:
-                                        const Color.fromARGB(255, 80, 158, 189)),
+                                    backgroundColor: const Color.fromARGB(
+                                        255, 80, 158, 189)),
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     try {
@@ -146,7 +128,9 @@ class _LoginScreen extends State<LoginScreen> {
                                         isLoading = true;
                                       });
                                       await Auth().signWithEmailAndPassword(
-                                          email: emailController.text.trim().toLowerCase(),
+                                          email: emailController.text
+                                              .trim()
+                                              .toLowerCase(),
                                           password:
                                               passwordController.text.trim());
                                       if (Auth().currentUser != null) {
@@ -206,53 +190,7 @@ class _LoginScreen extends State<LoginScreen> {
                             ],
                           ),
                         ),
-<<<<<<< HEAD
-                        const SizedBox(
-                          height: 20,
-                        ),
-                        //login button
-                        TextButton(
-                          style: TextButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 80, 158, 189)),
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (context) {
-                                return const HomePage();
-                              },
-                            ));
-                          },
-                          //style: ElevatedButton.styleFrom(),
-                          child: const Text(
-                            "Login",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        // SizedBox(height: height*0.01,),
-                        TextButton(
-                          // style: TextButton.styleFrom(
-                          //     backgroundColor:
-                          //         Color.fromARGB(255, 80, 158, 189)),
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(
-                              builder: (context) {
-                                return const Registration();
-                              },
-                            ));
-                          },
-                          //style: ElevatedButton.styleFrom(),
-                          child: const Text(
-                            "Not have an account? Register",
-                            style: TextStyle(color: Colors.blue),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-=======
                       ),
->>>>>>> ntateshelile
               ],
             ),
           ),

@@ -24,24 +24,6 @@ class _ProfileState extends State<Profile> {
       fit: StackFit.expand,
       children: [
         const Background(),
-<<<<<<< HEAD
-        SizedBox(
-          width: width,
-          height: height,
-          child: ListView(
-            children: [
-              Padding(
-                  padding: EdgeInsets.only(top: height * 0.25, left: width * 0),
-                  child: SizedBox(
-                    width: width * 0.5,
-                    height: height * 0.2,
-                    child: CircleAvatar(
-                      backgroundColor: const Color.fromARGB(255, 230, 233, 233),
-                      child: Icon(
-                        Icons.person_rounded,
-                        size: width * 0.4,
-                        color: const Color.fromARGB(255, 51, 153, 156),
-=======
         StreamBuilder<QuerySnapshot>(
           stream: _usersStream,
           builder:
@@ -160,7 +142,6 @@ class _ProfileState extends State<Profile> {
                       child: const Text(
                         "Sign Out",
                         style: TextStyle(color: Colors.white),
->>>>>>> ntateshelile
                       ),
                     ),
                   )

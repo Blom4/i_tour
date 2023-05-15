@@ -68,19 +68,10 @@ class _TransportCabsState extends State<TransportCabs> {
     );
   }
 
-<<<<<<< HEAD
-
-  List<Widget> _getItems(BuildContext context) {
-    final List<Widget> todoWidgets = <Widget>[];
-    for (String title in _todoList) {
-      todoWidgets.add(_buildTrackPerson(title, context));
-=======
   List<Widget> _getItems(BuildContext context, var data) {
     final List<Widget> todoWidgets = <Widget>[];
     for (var item in data) {
-      todoWidgets
-          .add(_buildCarsItems(item['name'], item['contacts'], context));
->>>>>>> ntateshelile
+      todoWidgets.add(_buildCarsItems(item['name'], item['contacts'], context));
     }
     return todoWidgets;
   }
