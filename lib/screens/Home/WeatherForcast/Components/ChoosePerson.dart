@@ -22,7 +22,7 @@ class _ChoosePersonState extends State<ChoosePerson> {
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         isExpanded: true,
-        hint: const Row(
+        hint:  Row(
           children: [
             Icon(
               Icons.list,

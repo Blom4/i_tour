@@ -91,7 +91,7 @@ class _WeatherForecastState extends State<WeatherForecast> {
   }
 
   Widget contentNotDownloaded() {
-    return const Center(
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[

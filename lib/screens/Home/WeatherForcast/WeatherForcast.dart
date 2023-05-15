@@ -63,7 +63,7 @@ class _WeatherForecastState extends State<WeatherForecast> {
                         fontSize: 92,
                         fontWeight: FontWeight.w900),
                   ),
-                  const Column(
+                  Column(
                     children: [
                       Text(
                         "Few Clouds",
