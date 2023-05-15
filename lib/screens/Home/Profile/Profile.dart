@@ -1,9 +1,7 @@
-import 'package:card_loading/card_loading.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:i_tour/logic/firebase_auth.dart';
-import 'package:i_tour/main.dart';
 import 'package:i_tour/screens/Home/Profile/components/Background.dart';
 import 'package:restart_app/restart_app.dart';
 
@@ -53,7 +51,7 @@ class _ProfileState extends State<Profile> {
             final document = snapshot.data!.docs.firstWhere(
                 (element) => element['auth_id'] == Auth().currentUser!.uid);
             //  print(document['full_name']);
-            return Container(
+            return SizedBox(
               width: width,
               height: height,
               child: ListView(
@@ -61,7 +59,7 @@ class _ProfileState extends State<Profile> {
                   Padding(
                       padding:
                           EdgeInsets.only(top: height * 0.25, left: width * 0),
-                      child: Container(
+                      child: SizedBox(
                         width: width * 0.5,
                         height: height * 0.2,
                         child: CircleAvatar(

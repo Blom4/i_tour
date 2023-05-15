@@ -1,8 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:weather/weather.dart';
@@ -23,7 +21,7 @@ class _WeatherForecastState extends State<WeatherForecast> {
   List<Weather> _data = [];
   AppState _state = AppState.NOT_DOWNLOADED;
   double? lat, lon;
-  Set<Marker> _markers = <Marker>{};
+  final Set<Marker> _markers = <Marker>{};
   @override
   void initState() {
     super.initState();
@@ -71,7 +69,7 @@ class _WeatherForecastState extends State<WeatherForecast> {
           );
         },
         separatorBuilder: (context, index) {
-          return Divider();
+          return const Divider();
         },
       ),
     );
@@ -79,21 +77,21 @@ class _WeatherForecastState extends State<WeatherForecast> {
 
   Widget contentDownloading() {
     return Container(
-      margin: EdgeInsets.all(25),
+      margin: const EdgeInsets.all(25),
       child: Column(children: [
-        Text(
+        const Text(
           'Fetching Weather...',
           style: TextStyle(fontSize: 20),
         ),
         Container(
-            margin: EdgeInsets.only(top: 50),
-            child: Center(child: CircularProgressIndicator(strokeWidth: 10)))
+            margin: const EdgeInsets.only(top: 50),
+            child: const Center(child: CircularProgressIndicator(strokeWidth: 10)))
       ]),
     );
   }
 
   Widget contentNotDownloaded() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
@@ -126,27 +124,27 @@ class _WeatherForecastState extends State<WeatherForecast> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         Container(
-          margin: EdgeInsets.all(5),
+          margin: const EdgeInsets.all(5),
           child: TextButton(
-            child: Text(
-              'Fetch weather',
-              style: TextStyle(color: Colors.white),
-            ),
             onPressed: queryWeather,
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.blue)),
+            child: const Text(
+              'Fetch weather',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ),
         Container(
-          margin: EdgeInsets.all(5),
+          margin: const EdgeInsets.all(5),
           child: TextButton(
-            child: Text(
-              'Fetch forecast',
-              style: TextStyle(color: Colors.white),
-            ),
             onPressed: queryForecast,
             style: ButtonStyle(
                 backgroundColor: MaterialStateProperty.all(Colors.blue)),
+            child: const Text(
+              'Fetch forecast',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         )
       ],
@@ -198,11 +196,11 @@ class _WeatherForecastState extends State<WeatherForecast> {
     return Column(
       children: <Widget>[
         _buttons(),
-        Text(
+        const Text(
           'Output:',
           style: TextStyle(fontSize: 20),
         ),
-        Divider(
+        const Divider(
           height: 20.0,
           thickness: 2.0,
         ),

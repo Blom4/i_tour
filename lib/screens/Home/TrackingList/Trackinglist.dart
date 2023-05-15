@@ -122,7 +122,7 @@ class _TrackingListState extends State<TrackingList> {
     return showDialog(
         context: context,
         builder: (BuildContext context) {
-          String _error = "";
+          String error = "";
           bool isFound = false;
 
           return AlertDialog(
@@ -152,7 +152,7 @@ class _TrackingListState extends State<TrackingList> {
                             // print(results.docs.isEmpty);
                             if (results.docs.isEmpty) {
                               setState(() {
-                                _error = "user does not exist";
+                                error = "user does not exist";
                               });
                             } else {
                               // var data1 = results.docs.first.data();
@@ -183,19 +183,19 @@ class _TrackingListState extends State<TrackingList> {
                               if (isFound) {
                                 setState(() {
                                   isFound = true;
-                                  _error = "You have added user";
+                                  error = "You have added user";
                                 });
                               } else {
                                 setState(() {
                                   isFound = false;
-                                  _error = "";
+                                  error = "";
                                 });
                               }
                             }
                           } else {
                             setState(() {
                               isFound = true;
-                              _error = "you cannot add your account";
+                              error = "you cannot add your account";
                             });
                           }
 
@@ -206,9 +206,9 @@ class _TrackingListState extends State<TrackingList> {
                         decoration: const InputDecoration(
                             hintText: 'Enter email for user'),
                       ),
-                      if (_error.isNotEmpty)
+                      if (error.isNotEmpty)
                         Text(
-                          _error,
+                          error,
                           style: const TextStyle(color: Colors.red),
                         )
                     ],
@@ -250,11 +250,11 @@ class _TrackingListState extends State<TrackingList> {
   }
 
   List<Widget> _getItems(BuildContext context, var data) {
-    final List<Widget> _todoWidgets = <Widget>[];
+    final List<Widget> todoWidgets = <Widget>[];
     for (var element in data) {
-      _todoWidgets.add(_buildTrackPerson(element, context));
+      todoWidgets.add(_buildTrackPerson(element, context));
     }
-    return _todoWidgets;
+    return todoWidgets;
   }
 
   @override
@@ -337,7 +337,7 @@ class _TrackingListState extends State<TrackingList> {
       ),
       // add items to the to-do list
       floatingActionButton: FloatingActionButton(
-          backgroundColor: Color.fromARGB(255, 48, 125, 145),
+          backgroundColor: const Color.fromARGB(255, 48, 125, 145),
           onPressed: () => _displayDialog(context),
           tooltip: 'Add',
           child: const Icon(Icons.add)),

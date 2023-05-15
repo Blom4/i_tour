@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get/get.dart';
 import 'package:i_tour/logic/firebase_auth.dart';
 import 'package:i_tour/screens/Home/HomePage/HomePage.dart';
 import 'package:i_tour/screens/Login/background.dart';
 import 'package:i_tour/screens/Registration/Registration.dart';
-import 'package:i_tour/screens/Maps/Maps.dart';
 import 'package:wc_form_validators/wc_form_validators.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -124,7 +121,7 @@ class _LoginScreen extends State<LoginScreen> {
                               TextButton(
                                 style: TextButton.styleFrom(
                                     backgroundColor:
-                                        Color.fromARGB(255, 80, 158, 189)),
+                                        const Color.fromARGB(255, 80, 158, 189)),
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     try {

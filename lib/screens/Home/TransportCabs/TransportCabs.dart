@@ -69,12 +69,12 @@ class _TransportCabsState extends State<TransportCabs> {
   }
 
   List<Widget> _getItems(BuildContext context, var data) {
-    final List<Widget> _todoWidgets = <Widget>[];
+    final List<Widget> todoWidgets = <Widget>[];
     for (var item in data) {
-      _todoWidgets
+      todoWidgets
           .add(_buildCarsItems(item['name'], item['contacts'], context));
     }
-    return _todoWidgets;
+    return todoWidgets;
   }
 
   @override

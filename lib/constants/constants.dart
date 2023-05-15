@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:mailer/smtp_server.dart';
 
 const kGoogleApiKey = "AIzaSyDURifysCOAlU4a7E1Z8DMTCrebTCHO-PQ";
 final firebaseInstance = FirebaseFirestore.instance;

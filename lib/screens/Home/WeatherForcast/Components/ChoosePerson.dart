@@ -22,8 +22,8 @@ class _ChoosePersonState extends State<ChoosePerson> {
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         isExpanded: true,
-        hint: Row(
-          children: const [
+        hint: const Row(
+          children: [
             Icon(
               Icons.list,
               size: 16,
@@ -74,7 +74,7 @@ class _ChoosePersonState extends State<ChoosePerson> {
             border: Border.all(
               color: Colors.black26,
             ),
-            color: Color.fromARGB(255, 19, 127, 141),
+            color: const Color.fromARGB(255, 19, 127, 141),
           ),
           elevation: 2,
         ),
@@ -92,7 +92,7 @@ class _ChoosePersonState extends State<ChoosePerson> {
             padding: null,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(14),
-              color: Color.fromARGB(255, 47, 183, 224),
+              color: const Color.fromARGB(255, 47, 183, 224),
             ),
             elevation: 8,
             offset: const Offset(-20, 0),

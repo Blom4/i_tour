@@ -2,7 +2,7 @@ import 'package:mailer/mailer.dart';
 import 'package:mailer/smtp_server.dart';
 
 class EmailCode {
-  static final _email_username = "developer.ms@outlook.com";
+  static const _email_username = "developer.ms@outlook.com";
   static final _smtpServer = SmtpServer('smtp-mail.outlook.com',
       port: 587,
       ignoreBadCertificate: false,
@@ -16,7 +16,7 @@ class EmailCode {
       required String header,
       required String subject}) async {
     final message = Message()
-      ..from = Address(_email_username, 'Malefetsane Shelile')
+      ..from = const Address(_email_username, 'Malefetsane Shelile')
       ..recipients.add(to)
       // ..ccRecipients.addAll(['destCc1@example.com', 'destCc2@example.com'])
       // ..bccRecipients.add(Address('bccAddress@example.com'))
