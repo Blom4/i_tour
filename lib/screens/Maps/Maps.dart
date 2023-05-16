@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:flutter_rating_stars/flutter_rating_stars.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -450,40 +451,36 @@ class _MapsState extends ConsumerState<Maps> {
             ],
           ),
         ),
-        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
-        floatingActionButton: Container(
-          padding: const EdgeInsets.all(4).copyWith(left: 0),
-          width: screenWidth * 0.4,
-          //decoration: const BoxDecoration(color: Colors.white),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    searchToggle = false;
-                    radiusSlider = false;
-                    pressedNear = false;
-                    cardTapped = false;
-                    getDirections = true;
-                  });
-                },
-                child: const Icon(Icons.navigation),
-              ),
-              FloatingActionButton(
-                onPressed: () {
-                  setState(() {
-                    searchToggle = true;
-                    radiusSlider = false;
-                    pressedNear = false;
-                    cardTapped = false;
-                    getDirections = false;
-                  });
-                },
-                child: const Icon(Icons.search),
-              ),
-            ],
-          ),
+        //floatingActionButtonLocation: ExpandableFab.location,
+        floatingActionButton: ExpandableFab(
+          children: [
+            FloatingActionButton.small(
+              heroTag: null,
+              child: const Icon(Icons.navigation),
+              onPressed: () {
+                setState(() {
+                  searchToggle = false;
+                  radiusSlider = false;
+                  pressedNear = false;
+                  cardTapped = false;
+                  getDirections = true;
+                });
+              },
+            ),
+            FloatingActionButton.small(
+              heroTag: null,
+              child: const Icon(Icons.search),
+              onPressed: () {
+                setState(() {
+                  searchToggle = true;
+                  radiusSlider = false;
+                  pressedNear = false;
+                  cardTapped = false;
+                  getDirections = false;
+                });
+              },
+            ),
+          ],
         ),
       ),
     );

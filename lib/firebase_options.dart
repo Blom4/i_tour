@@ -23,9 +23,15 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        return ios;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for ios - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -49,6 +55,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '883579603127',
     projectId: 'itour-7d8c7',
     authDomain: 'itour-7d8c7.firebaseapp.com',
+    databaseURL: 'https://itour-7d8c7-default-rtdb.firebaseio.com',
     storageBucket: 'itour-7d8c7.appspot.com',
   );
 
@@ -57,26 +64,7 @@ class DefaultFirebaseOptions {
     appId: '1:883579603127:android:6c4ee5e33391a88f71e532',
     messagingSenderId: '883579603127',
     projectId: 'itour-7d8c7',
+    databaseURL: 'https://itour-7d8c7-default-rtdb.firebaseio.com',
     storageBucket: 'itour-7d8c7.appspot.com',
-  );
-
-  static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBzJ5JJwm6Ry8IMbyZon8IFTfpEGK3AVWY',
-    appId: '1:883579603127:ios:08cb285ca661620971e532',
-    messagingSenderId: '883579603127',
-    projectId: 'itour-7d8c7',
-    storageBucket: 'itour-7d8c7.appspot.com',
-    iosClientId: '883579603127-9e2ki97npo7p2thvb5e5903hro5n2jl6.apps.googleusercontent.com',
-    iosBundleId: 'com.example.iTour',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyBzJ5JJwm6Ry8IMbyZon8IFTfpEGK3AVWY',
-    appId: '1:883579603127:ios:08cb285ca661620971e532',
-    messagingSenderId: '883579603127',
-    projectId: 'itour-7d8c7',
-    storageBucket: 'itour-7d8c7.appspot.com',
-    iosClientId: '883579603127-9e2ki97npo7p2thvb5e5903hro5n2jl6.apps.googleusercontent.com',
-    iosBundleId: 'com.example.iTour',
   );
 }
