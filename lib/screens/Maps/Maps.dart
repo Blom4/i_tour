@@ -89,6 +89,7 @@ class _MapsState extends ConsumerState<Maps> {
     var counter = markerIdCounter++;
 
     final Marker marker = Marker(
+        flat: true,
         markerId: MarkerId('marker_$counter'),
         position: point,
         onTap: () {},
@@ -219,7 +220,8 @@ class _MapsState extends ConsumerState<Maps> {
     final allSearchResults = ref.watch(placeResultsProvider);
     final searchFlag = ref.watch(searchToggleProvider);
 
-    return Scaffold(
+    return SafeArea(
+      child: Scaffold(
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -229,7 +231,7 @@ class _MapsState extends ConsumerState<Maps> {
                     height: screenHeight,
                     width: screenWidth,
                     child: GoogleMap(
-                      mapType: MapType.normal,
+                      mapType: MapType.hybrid,
                       markers: _markers,
                       polylines: _polylines,
                       circles: _circles,
@@ -448,9 +450,27 @@ class _MapsState extends ConsumerState<Maps> {
             ],
           ),
         ),
-        floatingActionButton: Column(
-          children: [
-            IconButton(
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
+        floatingActionButton: Container(
+          padding: const EdgeInsets.all(4).copyWith(left: 0),
+          width: screenWidth * 0.4,
+          //decoration: const BoxDecoration(color: Colors.white),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              FloatingActionButton(
+                onPressed: () {
+                  setState(() {
+                    searchToggle = false;
+                    radiusSlider = false;
+                    pressedNear = false;
+                    cardTapped = false;
+                    getDirections = true;
+                  });
+                },
+                child: const Icon(Icons.navigation),
+              ),
+              FloatingActionButton(
                 onPressed: () {
                   setState(() {
                     searchToggle = true;
@@ -460,21 +480,13 @@ class _MapsState extends ConsumerState<Maps> {
                     getDirections = false;
                   });
                 },
-                icon: const Icon(Icons.search)),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  searchToggle = false;
-                  radiusSlider = false;
-                  pressedNear = false;
-                  cardTapped = false;
-                  getDirections = true;
-                });
-              },
-              icon: const Icon(Icons.navigation),
-            )
-          ],
-        ));
+                child: const Icon(Icons.search),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   FlipCard _myFlipCard() {
