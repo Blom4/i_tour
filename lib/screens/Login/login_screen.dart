@@ -82,7 +82,6 @@ class _LoginScreen extends State<LoginScreen> {
                                 controller: emailController,
                                 decoration: const InputDecoration(
                                   labelText: "Email Address",
-                              
                                 ),
                               ),
                               const SizedBox(
@@ -106,7 +105,6 @@ class _LoginScreen extends State<LoginScreen> {
                                     },
                                   ),
                                   labelText: "Password",
-                                  
                                 ),
                               ),
                               const SizedBox(
@@ -115,8 +113,8 @@ class _LoginScreen extends State<LoginScreen> {
                               //login button
                               TextButton(
                                 style: TextButton.styleFrom(
-                                    backgroundColor:
-                                        const Color.fromARGB(255, 80, 158, 189)),
+                                    backgroundColor: const Color.fromARGB(
+                                        255, 80, 158, 189)),
                                 onPressed: () async {
                                   if (_formKey.currentState!.validate()) {
                                     try {
@@ -124,7 +122,9 @@ class _LoginScreen extends State<LoginScreen> {
                                         isLoading = true;
                                       });
                                       await Auth().signWithEmailAndPassword(
-                                          email: emailController.text.trim().toLowerCase(),
+                                          email: emailController.text
+                                              .trim()
+                                              .toLowerCase(),
                                           password:
                                               passwordController.text.trim());
                                       if (Auth().currentUser != null) {
@@ -151,6 +151,7 @@ class _LoginScreen extends State<LoginScreen> {
                                       });
                                     }
                                   }
+                                
                                   if (error.isNotEmpty) {
                                     // ignore: use_build_context_synchronously
                                     ScaffoldMessenger.of(context)
