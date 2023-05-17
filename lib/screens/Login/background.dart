@@ -31,9 +31,9 @@ class Background extends StatelessWidget {
           Expanded(
             child: Container(),
           ),
-          const Stack(
+           Stack(
             alignment: Alignment.bottomLeft,
-            children: <Widget>[
+            children: const <Widget>[
               WavyFooter(),
               CirclePink(),
               CircleYellow(),
