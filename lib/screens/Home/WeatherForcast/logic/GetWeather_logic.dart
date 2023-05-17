@@ -25,10 +25,18 @@ class GetWeather {
     pointLocation = results.docs.first.data()['liveLocation'] ?? Null;
   }
 
+  Future getFiveDayFocus(Function setState) async {
+    Position pos = await determinePosition();
+    currentWeather =
+        await ws.fiveDayForecastByLocation(pos.latitude, pos.longitude);
+    setState(() {});
+  }
+
   Future getCurrentWeatherByGeo(Function setState) async {
     Position pos = await determinePosition();
-    var se = currentWeather =
+    currentWeather =
         await ws.currentWeatherByLocation(pos.latitude, pos.longitude);
+
     setState(() {
       if (currentWeather.weatherConditionCode == 800) {
         //clear sky weather code 800
@@ -39,13 +47,13 @@ class GetWeather {
           "description": currentWeather.weatherDescription
         };
       }
-      
+
       if (currentWeather.weatherConditionCode == 801) {
         //few clouds weather code 801
         topWrInfo = {
           "icon": "assets/weather/sunclouds.svg",
           "date": DateTime.parse(currentWeather.date.toString()),
-          "temp": se.temperature,
+          "temp": currentWeather.temperature,
           "description": currentWeather.weatherDescription
         };
       }
@@ -55,7 +63,7 @@ class GetWeather {
         topWrInfo = {
           "icom": "assets/weather/cloudy.svg",
           "date": DateTime.parse(currentWeather.date.toString()),
-          "temp": se.temperature,
+          "temp": currentWeather.temperature,
           "description": currentWeather.weatherDescription
         };
       }
@@ -65,7 +73,7 @@ class GetWeather {
         topWrInfo = {
           "icon": "assets/weather/rain.svg",
           "date": DateTime.parse(currentWeather.date.toString()),
-          "temp": se.temperature,
+          "temp": currentWeather.temperature,
           "description": currentWeather.weatherDescription
         };
       }
@@ -75,7 +83,7 @@ class GetWeather {
         topWrInfo = {
           "icon": "assets/weather/thunder_rain.svg",
           "date": DateTime.parse(currentWeather.date.toString()),
-          "temp": se.temperature,
+          "temp": currentWeather.temperature,
           "description": currentWeather.weatherDescription
         };
       }
@@ -85,7 +93,7 @@ class GetWeather {
         topWrInfo = {
           "icon": "assets/weather/snow.svg",
           "date": DateTime.parse(currentWeather.date.toString()),
-          "temp": se.temperature,
+          "temp": currentWeather.temperature,
           "description": currentWeather.weatherDescription
         };
       }
@@ -95,7 +103,7 @@ class GetWeather {
         topWrInfo = {
           "icon": "assets/weather/thunder.svg",
           "date": DateTime.parse(currentWeather.date.toString()),
-          "temp": se.temperature,
+          "temp": currentWeather.temperature,
           "description": currentWeather.weatherDescription
         };
       }
