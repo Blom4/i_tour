@@ -25,13 +25,6 @@ class _TrackingListState extends State<TrackingList> {
   );
   // text field
   final TextEditingController _textFieldController = TextEditingController();
-  // void _addTodoItem(var element) {
-  //   //  a set state will notify the app that the state has changed
-  //   setState(() {
-  //     _todoList.add(element);
-  //   });
-  //   _textFieldController.clear();
-  // }
 
   Widget _buildTrackPerson(var element, BuildContext context) {
     return StreamBuilder(
@@ -155,8 +148,6 @@ class _TrackingListState extends State<TrackingList> {
                                 error = "user does not exist";
                               });
                             } else {
-                              // var data1 = results.docs.first.data();
-                              // print(results.docs.first);
                               //search for current auth user then check monitor users if they exist
                               var res = await firebaseInstance
                                   .collection("User")
@@ -167,8 +158,7 @@ class _TrackingListState extends State<TrackingList> {
                                           .toLowerCase())
                                   .get();
                               var data;
-                              // var data2 =
-                              //     await res.docs.first.data()['monitor'];
+                             
                               for (var element
                                   in res.docs.first.data()['monitor'] ?? []) {
                                 data = await element.get();
@@ -179,7 +169,6 @@ class _TrackingListState extends State<TrackingList> {
                                 }
                               }
 
-                              // print(res.docs.first.data());
                               if (isFound) {
                                 setState(() {
                                   isFound = true;
@@ -198,8 +187,6 @@ class _TrackingListState extends State<TrackingList> {
                               error = "you cannot add your account";
                             });
                           }
-
-                          // print(results.docs.length);
                         },
                         controller: _textFieldController,
                         keyboardType: TextInputType.emailAddress,

@@ -106,12 +106,7 @@ class _LoginScreen extends State<LoginScreen> {
                                     },
                                   ),
                                   labelText: "Password",
-                                  // enabledBorder: OutlineInputBorder(
-                                  //   borderSide: BorderSide(),
-                                  // ),
-                                  // focusedBorder: OutlineInputBorder(
-                                  //   borderSide: BorderSide(),
-                                  // ),
+                                  
                                 ),
                               ),
                               const SizedBox(
