@@ -206,7 +206,7 @@ class GetWeather {
         });
       }
     }
-    
+
     final seen = Set();
     return data
         .sublist(1)
