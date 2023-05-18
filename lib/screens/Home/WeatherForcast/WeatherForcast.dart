@@ -1,10 +1,12 @@
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Components/ChoosePerson.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Components/Search.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/Constants.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/logic/GetWeather_logic.dart';
+import 'package:weather/weather.dart';
 
 class WeatherForecast extends StatefulWidget {
   const WeatherForecast({Key? key}) : super(key: key);
@@ -37,10 +39,11 @@ class _WeatherForecastState extends State<WeatherForecast> {
             children: [
               StreamBuilder(
                 initialData: wr.getCurrentWeatherByGeo(setState),
+                stream: wr.getCurrentWeatherByGeo(setState).asStream(),
                 builder: (context, snapshot) {
-                  // print(snapshot);
+                  //  print(snapshot.data??"");
 
-                  if (snapshot.hasData) {
+                  if (snapshot.hasData && wr.topWrInfo.isNotEmpty) {
                     return Container(
                       decoration: const BoxDecoration(
                           borderRadius: BorderRadius.only(
@@ -86,7 +89,9 @@ class _WeatherForecastState extends State<WeatherForecast> {
                                     fontWeight: FontWeight.w600),
                               ),
                               Text(
-                                "${weekdays[wr.topWrInfo["date"].weekday]}, ${wr.topWrInfo['date'].day} ${months[wr.topWrInfo['date'].month - 1]}",
+                                wr.topWrInfo.isEmpty
+                                    ? ""
+                                    : "${weekdays[wr.topWrInfo["date"].weekday]}, ${wr.topWrInfo['date'].day} ${months[wr.topWrInfo['date'].month - 1]}",
                                 style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 27,

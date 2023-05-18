@@ -25,14 +25,14 @@ class GetWeather {
     pointLocation = results.docs.first.data()['liveLocation'] ?? Null;
   }
 
-  Future getFiveDayFocus(Function setState) async {
+  Future getFiveDaysFocus(Function setState) async {
     Position pos = await determinePosition();
     currentWeather =
         await ws.fiveDayForecastByLocation(pos.latitude, pos.longitude);
     setState(() {});
   }
 
-  Future getCurrentWeatherByGeo(Function setState) async {
+  Future<Weather> getCurrentWeatherByGeo(Function setState) async {
     Position pos = await determinePosition();
     currentWeather =
         await ws.currentWeatherByLocation(pos.latitude, pos.longitude);
@@ -61,7 +61,7 @@ class GetWeather {
           currentWeather.weatherConditionCode <= 804) {
         //scatterd clouds weather code 802
         topWrInfo = {
-          "icom": "assets/weather/cloudy.svg",
+          "icon": "assets/weather/cloudy.svg",
           "date": DateTime.parse(currentWeather.date.toString()),
           "temp": currentWeather.temperature,
           "description": currentWeather.weatherDescription
@@ -108,5 +108,6 @@ class GetWeather {
         };
       }
     });
+    return currentWeather;
   }
 }
