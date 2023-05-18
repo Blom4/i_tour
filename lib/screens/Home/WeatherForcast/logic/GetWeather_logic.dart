@@ -134,7 +134,7 @@ class GetWeather {
         await ws.fiveDayForecastByLocation(pos.latitude, pos.longitude);
     // print(currentWeather);
     List data = [];
-
+    // print(res.length);
     for (Weather item in res) {
       if (item.weatherConditionCode == 800) {
         //clear sky weather code 800
@@ -206,7 +206,11 @@ class GetWeather {
         });
       }
     }
-
-    return data;
+    
+    final seen = Set();
+    return data
+        .sublist(1)
+        .where((element) => seen.add(element["date"].weekday))
+        .toList();
   }
 }

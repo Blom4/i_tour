@@ -170,200 +170,71 @@ class _WeatherForecastState extends State<WeatherForecast> {
                         if (!snapshots.hasData) {
                           return const SizedBox();
                         }
-                        return Padding(
-                          padding: EdgeInsets.only(top: 10, left: width * 0.05),
-                          child: SizedBox(
-                              width: width * 0.9,
-                              height: height * 0.2,
-                              child: ListView(
-                                scrollDirection: Axis.horizontal,
-                                children: [
-                                  Container(
-                                    width: width * 0.3,
-                                    height: height * 0.1,
-                                    decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                            begin: Alignment.bottomLeft,
-                                            end: Alignment.topRight,
-                                            colors: [
-                                              Color.fromARGB(255, 46, 44, 44),
-                                              Colors.grey
-                                            ]),
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: height * 0.02,
-                                        ),
-                                        const Text(
-                                          "15°",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w900,
-                                              fontSize: 22),
-                                        ),
-                                        SvgPicture.asset(
-                                          // color: Colors.white,
-                                          width: width * 0.23,
-                                          "assets/weather/sunclouds.svg",
-                                          placeholderBuilder: (context) =>
-                                              const CircularProgressIndicator(),
-                                        ),
-                                        const Text(
-                                          "Monday",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 15),
-                                        ),
-                                      ],
-                                    ),
+
+                        return SizedBox(
+                            width: width * 0.9,
+                            height: height * 0.2,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: snapshots.data.length,
+                              itemBuilder: (context, index) {
+                                return Container(
+                                  width: width * 0.4,
+                                  height: height * 0.1,
+                                  margin: EdgeInsets.only(
+                                      right: MediaQuery.of(context)
+                                              .copyWith()
+                                              .size
+                                              .width *
+                                          0.05,
+                                      top: MediaQuery.of(context)
+                                              .copyWith()
+                                              .size
+                                              .height *
+                                          0.005),
+                                  decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                          begin: Alignment.bottomLeft,
+                                          end: Alignment.topRight,
+                                          colors: [
+                                            Color.fromARGB(255, 46, 44, 44),
+                                            Colors.grey
+                                          ]),
+                                      borderRadius: BorderRadius.circular(20)),
+                                  child: Column(
+                                    children: [
+                                      SizedBox(
+                                        height: height * 0.02,
+                                      ),
+                                      Text(
+                                        "${snapshots.data[index]['description']}",
+                                        style: const TextStyle(
+                                          overflow: TextOverflow.ellipsis,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 15),
+                                      ),
+                                      SvgPicture.asset(
+                                        // color: Colors.white,
+                                        width: width * 0.23,
+                                        "${snapshots.data[index]['icon']}",
+                                        placeholderBuilder: (context) =>
+                                            const CircularProgressIndicator(),
+                                      ),
+                                      Text(
+                                        weekdays[snapshots
+                                                .data[index]['date'].weekday -
+                                            1],
+                                        style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 15),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: width * 0.035,
-                                  ),
-                                  Container(
-                                    // padding: EdgeInsets.only(left: width*0.02),
-                                    width: width * 0.3,
-                                    height: height * 0.1,
-                                    decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                            begin: Alignment.bottomLeft,
-                                            end: Alignment.topRight,
-                                            colors: [
-                                              Color.fromARGB(255, 46, 44, 44),
-                                              Colors.grey
-                                            ]),
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: height * 0.02,
-                                        ),
-                                        const Text(
-                                          "22°",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w900,
-                                              fontSize: 22),
-                                        ),
-                                        SvgPicture.asset(
-                                          // color: Colors.white,
-                                          width: width * 0.23,
-                                          "assets/weather/sunset.svg",
-                                          placeholderBuilder: (context) =>
-                                              const CircularProgressIndicator(),
-                                        ),
-                                        const Text(
-                                          "Tuesday",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 15),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: width * 0.035,
-                                  ),
-                                  Container(
-                                    // padding: EdgeInsets.only(left: width*0.02),
-                                    width: width * 0.3,
-                                    height: height * 0.1,
-                                    decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                            begin: Alignment.bottomLeft,
-                                            end: Alignment.topRight,
-                                            colors: [
-                                              Color.fromARGB(255, 46, 44, 44),
-                                              Colors.grey
-                                            ]),
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: height * 0.02,
-                                        ),
-                                        const Text(
-                                          "30°",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w900,
-                                              fontSize: 22),
-                                        ),
-                                        SvgPicture.asset(
-                                          // color: Colors.white,
-                                          width: width * 0.23,
-                                          "assets/weather/sunset.svg",
-                                          placeholderBuilder: (context) =>
-                                              const CircularProgressIndicator(),
-                                        ),
-                                        const Text(
-                                          "Wednesday",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 15),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: width * 0.035,
-                                  ),
-                                  Container(
-                                    // padding: EdgeInsets.only(left: width*0.02),
-                                    width: width * 0.3,
-                                    height: height * 0.1,
-                                    decoration: BoxDecoration(
-                                        gradient: const LinearGradient(
-                                            begin: Alignment.bottomLeft,
-                                            end: Alignment.topRight,
-                                            colors: [
-                                              Color.fromARGB(255, 46, 44, 44),
-                                              Colors.grey
-                                            ]),
-                                        borderRadius:
-                                            BorderRadius.circular(20)),
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: height * 0.02,
-                                        ),
-                                        const Text(
-                                          "15°",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w900,
-                                              fontSize: 22),
-                                        ),
-                                        SvgPicture.asset(
-                                          // color: Colors.white,
-                                          width: width * 0.23,
-                                          "assets/weather/cloudy.svg",
-                                          placeholderBuilder: (context) =>
-                                              const CircularProgressIndicator(),
-                                        ),
-                                        const Text(
-                                          "Thursday",
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 15),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: width * 0.035,
-                                  ),
-                                ],
-                              )),
-                        );
+                                );
+                              },
+                            ));
                       })
                 ],
               ),
