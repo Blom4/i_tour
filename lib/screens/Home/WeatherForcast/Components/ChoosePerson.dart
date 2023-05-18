@@ -1,5 +1,8 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:i_tour/constants/constants.dart';
+import 'package:i_tour/logic/firebase_auth.dart';
+import 'package:i_tour/screens/Home/WeatherForcast/Constants.dart';
 
 class ChoosePerson extends StatefulWidget {
   const ChoosePerson({Key? key}) : super(key: key);
@@ -9,20 +12,30 @@ class ChoosePerson extends StatefulWidget {
 }
 
 class _ChoosePersonState extends State<ChoosePerson> {
-  final List<String> items = [
-    'Malefetsane Shelile',
-    'Thabo Nape',
-    'Sello Thao',
-    'Reneilwe Moilwa',
-  ];
-  String? selectedValue;
+  Map? selectedValue;
+  @override
+  void initState() {
+    super.initState();
+    var results = firebaseInstance
+        .collection('User')
+        .where("email", isEqualTo: Auth().currentUser!.email!.toLowerCase())
+        .get()
+        .then((value) {
+      setState(() {
+        monitorRecipients.add({
+          "full_name": value.docs.first.data()['full_name'],
+          "email": value.docs.first.data()['email']
+        });
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return DropdownButtonHideUnderline(
       child: DropdownButton2(
         isExpanded: true,
-        hint:  Row(
+        hint: Row(
           children: const [
             Icon(
               Icons.list,
@@ -45,11 +58,11 @@ class _ChoosePersonState extends State<ChoosePerson> {
             ),
           ],
         ),
-        items: items
-            .map((item) => DropdownMenuItem<String>(
+        items: monitorRecipients
+            .map((item) => DropdownMenuItem<Map>(
                   value: item,
                   child: Text(
-                    item,
+                    item['full_name'] ?? "",
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -62,7 +75,7 @@ class _ChoosePersonState extends State<ChoosePerson> {
         value: selectedValue,
         onChanged: (value) {
           setState(() {
-            selectedValue = value as String;
+            selectedValue = value;
           });
         },
         buttonStyleData: ButtonStyleData(

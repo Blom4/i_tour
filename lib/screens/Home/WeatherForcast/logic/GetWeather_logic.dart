@@ -11,11 +11,15 @@ class GetWeather {
   late WeatherFactory ws;
   // String topWrIcon = "";
   Map topWrInfo = {};
+  bool isOtherGetPos = false;
   var currentWeather;
   void initWeather() {
     ws = WeatherFactory(weatherKey);
   }
 
+  Future fetchMonitoringPeople() async {
+    
+  }
   Future getPointLocation({required String email}) async {
     var results = await firebaseInstance
         .collection('User')
