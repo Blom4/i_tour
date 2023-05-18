@@ -1,11 +1,13 @@
-import 'dart:async';
-
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:get/get.dart';
+import 'package:i_tour/screens/Home/WeatherForcast/Components/ChoosePerson.dart';
+import 'package:i_tour/screens/Home/WeatherForcast/Components/Search.dart';
+import 'package:i_tour/screens/Home/WeatherForcast/Constants.dart';
+import 'package:i_tour/screens/Home/WeatherForcast/logic/GetWeather_logic.dart';
+import 'package:i_tour/store/store.dart';
 import 'package:weather/weather.dart';
-
-enum AppState { NOT_DOWNLOADED, DOWNLOADING, FINISHED_DOWNLOADING }
 
 class WeatherForecast extends StatefulWidget {
   const WeatherForecast({Key? key}) : super(key: key);
@@ -15,197 +17,368 @@ class WeatherForecast extends StatefulWidget {
 }
 
 class _WeatherForecastState extends State<WeatherForecast> {
-  String key = 'f08a0a2edce5dfcc41c8fcdcfd130a73';
-  late WeatherFactory ws;
-  final Completer<GoogleMapController> _controller = Completer();
-  List<Weather> _data = [];
-  AppState _state = AppState.NOT_DOWNLOADED;
-  double? lat, lon;
-  final Set<Marker> _markers = <Marker>{};
+  final searchController = TextEditingController();
+  // late GetWeather wr;
+  final Store store = Get.find<Store>();
   @override
   void initState() {
     super.initState();
-    ws = WeatherFactory(key);
-  }
+    // store.getWeather = GetWeather();
+    store.getWeather.initWeather();
 
-  void queryForecast() async {
-    /// Removes keyboard
-    FocusScope.of(context).requestFocus(FocusNode());
-    setState(() {
-      _state = AppState.DOWNLOADING;
-    });
-    Position pos = await _determinePosition();
-    List<Weather> forecasts =
-        await ws.fiveDayForecastByLocation(pos.latitude, pos.longitude);
-    setState(() {
-      _data = forecasts;
-      _state = AppState.FINISHED_DOWNLOADING;
-    });
-  }
-
-  void queryWeather() async {
-    /// Removes keyboard
-    FocusScope.of(context).requestFocus(FocusNode());
-
-    setState(() {
-      _state = AppState.DOWNLOADING;
-    });
-    Position pos = await _determinePosition();
-    Weather weather =
-        await ws.currentWeatherByLocation(pos.latitude, pos.longitude);
-    setState(() {
-      _data = [weather];
-      _state = AppState.FINISHED_DOWNLOADING;
-    });
-  }
-
-  Widget contentFinishedDownload() {
-    return Center(
-      child: ListView.separated(
-        itemCount: _data.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(_data[index].toString()),
-          );
-        },
-        separatorBuilder: (context, index) {
-          return const Divider();
-        },
-      ),
-    );
-  }
-
-  Widget contentDownloading() {
-    return Container(
-      margin: const EdgeInsets.all(25),
-      child: Column(children: [
-        const Text(
-          'Fetching Weather...',
-          style: TextStyle(fontSize: 20),
-        ),
-        Container(
-            margin: const EdgeInsets.only(top: 50),
-            child: const Center(child: CircularProgressIndicator(strokeWidth: 10)))
-      ]),
-    );
-  }
-
-  Widget contentNotDownloaded() {
-    return  Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: const <Widget>[
-          Text(
-            'Press the button to download the Weather forecast',
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _resultView() => _state == AppState.FINISHED_DOWNLOADING
-      ? contentFinishedDownload()
-      : _state == AppState.DOWNLOADING
-          ? contentDownloading()
-          : contentNotDownloaded();
-
-  void _saveLat(String input) {
-    lat = double.tryParse(input);
-    print(lat);
-  }
-
-  void _saveLon(String input) {
-    lon = double.tryParse(input);
-    print(lon);
-  }
-
-  Widget _buttons() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Container(
-          margin: const EdgeInsets.all(5),
-          child: TextButton(
-            onPressed: queryWeather,
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.blue)),
-            child: const Text(
-              'Fetch weather',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        ),
-        Container(
-          margin: const EdgeInsets.all(5),
-          child: TextButton(
-            onPressed: queryForecast,
-            style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Colors.blue)),
-            child: const Text(
-              'Fetch forecast',
-              style: TextStyle(color: Colors.white),
-            ),
-          ),
-        )
-      ],
-    );
-  }
-
-  Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-    return await Geolocator.getCurrentPosition();
-  }
-
-  Future<void> _findMyLoction() async {
-    final GoogleMapController controller = await _controller.future;
-    Position pos = await _determinePosition();
-    CameraPosition currPos = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(pos.latitude, pos.longitude),
-      tilt: 59.440717697143555,
-      zoom: 14,
-    );
-    controller.animateCamera(CameraUpdate.newCameraPosition(currPos));
-
-    setState(() {});
+    // store.getWeather.getCurrentWeatherByGeo();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        _buttons(),
-        const Text(
-          'Output:',
-          style: TextStyle(fontSize: 20),
-        ),
-        const Divider(
-          height: 20.0,
-          thickness: 2.0,
-        ),
-        Expanded(child: _resultView())
-      ],
+    final width = MediaQuery.of(context).copyWith().size.width;
+    final height = MediaQuery.of(context).copyWith().size.height;
+    // print(Auth().currentUser!.email);
+    return GetBuilder(
+      init: store,
+      builder: (_) {
+        return Stack(
+          children: [
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  StreamBuilder(
+                    initialData: store.getWeather.getCurrentWeatherByGeo(),
+                    stream:
+                        store.getWeather.getCurrentWeatherByGeo().asStream(),
+                    builder: (context, snapshot) {
+                      //  print(snapshot.data??"");
+
+                      if (snapshot.hasData &&
+                          store.getWeather.topWrInfo.isNotEmpty) {
+                        return Container(
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(60),
+                                  bottomRight: Radius.circular(60)),
+                              gradient: LinearGradient(
+                                  begin: Alignment.centerLeft,
+                                  end: Alignment.bottomRight,
+                                  colors: [
+                                    Color.fromARGB(255, 85, 180, 218),
+                                    Color.fromARGB(255, 105, 235, 240)
+                                  ])),
+                          width: width,
+                          height: height * 0.7,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: height * 0.1,
+                              ),
+                              SvgPicture.asset(
+                                // ignore: deprecated_member_use
+                                color: (store.getWeather.currentWeather
+                                                    .weatherConditionCode >=
+                                                210 &&
+                                            store.getWeather.currentWeather
+                                                    .weatherConditionCode <=
+                                                232) ||
+                                        (store.getWeather.currentWeather
+                                                    .weatherConditionCode >=
+                                                601 &&
+                                            store.getWeather.currentWeather
+                                                    .weatherConditionCode <=
+                                                622) ||
+                                        (store.getWeather.currentWeather
+                                                    .weatherConditionCode >=
+                                                500 &&
+                                            store.getWeather.currentWeather
+                                                    .weatherConditionCode <=
+                                                531)
+                                    ? Colors.white
+                                    : null,
+                                width: width * 0.7,
+                                store.getWeather.topWrInfo.isEmpty
+                                    ? ""
+                                    : store.getWeather.topWrInfo['icon']
+                                        .toString(),
+                                placeholderBuilder: (context) =>
+                                    const CircularProgressIndicator(),
+                              ),
+                              Text(
+                                "${store.getWeather.topWrInfo['temp'].toString().split(" ")[0]}°",
+                                style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 92,
+                                    fontWeight: FontWeight.w900),
+                              ),
+                              Column(
+                                children: [
+                                  Text(
+                                    store.getWeather.topWrInfo['description'] ??
+                                        "weather",
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 27,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  Text(
+                                    store.getWeather.topWrInfo.isEmpty
+                                        ? ""
+                                        : "${weekdays[store.getWeather.topWrInfo["date"].weekday]}, ${store.getWeather.topWrInfo['date'].day} ${months[store.getWeather.topWrInfo['date'].month - 1]}",
+                                    style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 27,
+                                        fontWeight: FontWeight.w300),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      return Container(
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(60),
+                                bottomRight: Radius.circular(60)),
+                            gradient: LinearGradient(
+                                begin: Alignment.centerLeft,
+                                end: Alignment.bottomRight,
+                                colors: [
+                                  Color.fromARGB(255, 85, 180, 218),
+                                  Color.fromARGB(255, 105, 235, 240)
+                                ])),
+                        width: width,
+                        height: height * 0.7,
+                        child: Padding(
+                            padding: EdgeInsets.only(
+                              top: MediaQuery.of(context)
+                                      .copyWith()
+                                      .size
+                                      .height *
+                                  0.01,
+                              // left: MediaQuery.of(context).copyWith().size.width * 0.5
+                            ),
+                            child: const SpinKitDualRing(
+                              color: Color.fromARGB(255, 35, 104, 136),
+                              size: 150,
+                              // duration: Duration(milliseconds: 1000),
+                            )),
+                      );
+                    },
+                  ),
+                  // SizedBox(height: height*0.5,),
+                  StreamBuilder(
+                      stream: store.getWeather.getFiveDaysForecast().asStream(),
+                      builder: (context, snapshots) {
+                        if (!snapshots.hasData) {
+                          return const SizedBox();
+                        }
+                        return Padding(
+                          padding: EdgeInsets.only(top: 10, left: width * 0.05),
+                          child: SizedBox(
+                              width: width * 0.9,
+                              height: height * 0.2,
+                              child: ListView(
+                                scrollDirection: Axis.horizontal,
+                                children: [
+                                  Container(
+                                    width: width * 0.3,
+                                    height: height * 0.1,
+                                    decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                            begin: Alignment.bottomLeft,
+                                            end: Alignment.topRight,
+                                            colors: [
+                                              Color.fromARGB(255, 46, 44, 44),
+                                              Colors.grey
+                                            ]),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: height * 0.02,
+                                        ),
+                                        const Text(
+                                          "15°",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 22),
+                                        ),
+                                        SvgPicture.asset(
+                                          // color: Colors.white,
+                                          width: width * 0.23,
+                                          "assets/weather/sunclouds.svg",
+                                          placeholderBuilder: (context) =>
+                                              const CircularProgressIndicator(),
+                                        ),
+                                        const Text(
+                                          "Monday",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: width * 0.035,
+                                  ),
+                                  Container(
+                                    // padding: EdgeInsets.only(left: width*0.02),
+                                    width: width * 0.3,
+                                    height: height * 0.1,
+                                    decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                            begin: Alignment.bottomLeft,
+                                            end: Alignment.topRight,
+                                            colors: [
+                                              Color.fromARGB(255, 46, 44, 44),
+                                              Colors.grey
+                                            ]),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: height * 0.02,
+                                        ),
+                                        const Text(
+                                          "22°",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 22),
+                                        ),
+                                        SvgPicture.asset(
+                                          // color: Colors.white,
+                                          width: width * 0.23,
+                                          "assets/weather/sunset.svg",
+                                          placeholderBuilder: (context) =>
+                                              const CircularProgressIndicator(),
+                                        ),
+                                        const Text(
+                                          "Tuesday",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: width * 0.035,
+                                  ),
+                                  Container(
+                                    // padding: EdgeInsets.only(left: width*0.02),
+                                    width: width * 0.3,
+                                    height: height * 0.1,
+                                    decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                            begin: Alignment.bottomLeft,
+                                            end: Alignment.topRight,
+                                            colors: [
+                                              Color.fromARGB(255, 46, 44, 44),
+                                              Colors.grey
+                                            ]),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: height * 0.02,
+                                        ),
+                                        const Text(
+                                          "30°",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 22),
+                                        ),
+                                        SvgPicture.asset(
+                                          // color: Colors.white,
+                                          width: width * 0.23,
+                                          "assets/weather/sunset.svg",
+                                          placeholderBuilder: (context) =>
+                                              const CircularProgressIndicator(),
+                                        ),
+                                        const Text(
+                                          "Wednesday",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: width * 0.035,
+                                  ),
+                                  Container(
+                                    // padding: EdgeInsets.only(left: width*0.02),
+                                    width: width * 0.3,
+                                    height: height * 0.1,
+                                    decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                            begin: Alignment.bottomLeft,
+                                            end: Alignment.topRight,
+                                            colors: [
+                                              Color.fromARGB(255, 46, 44, 44),
+                                              Colors.grey
+                                            ]),
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: height * 0.02,
+                                        ),
+                                        const Text(
+                                          "15°",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w900,
+                                              fontSize: 22),
+                                        ),
+                                        SvgPicture.asset(
+                                          // color: Colors.white,
+                                          width: width * 0.23,
+                                          "assets/weather/cloudy.svg",
+                                          placeholderBuilder: (context) =>
+                                              const CircularProgressIndicator(),
+                                        ),
+                                        const Text(
+                                          "Thursday",
+                                          style: TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 15),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: width * 0.035,
+                                  ),
+                                ],
+                              )),
+                        );
+                      })
+                ],
+              ),
+            ),
+            Positioned(
+                left: width * 0.03,
+                top: height * 0.055,
+                child: const SearchField()),
+            Positioned(
+                top: height * 0.05,
+                right: width * 0.01,
+                child: const ChoosePerson())
+          ],
+        );
+      },
     );
   }
 }
