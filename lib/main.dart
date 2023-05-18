@@ -2,11 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:i_tour/screens/Login/login_screen.dart';
-
+import 'package:i_tour/store/store.dart';
 import 'package:lottie/lottie.dart';
-
 import 'firebase_options.dart';
 //import 'screens/home_page.dart';
+import 'package:get/get.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,6 +39,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  final Store store = Get.put(Store());
   @override
   void initState() {
     // TODO: implement initState
