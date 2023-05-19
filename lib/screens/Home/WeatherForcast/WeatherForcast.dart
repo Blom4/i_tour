@@ -209,7 +209,7 @@ class _WeatherForecastState extends State<WeatherForecast> {
                                       Text(
                                         "${snapshots.data[index]['description']}",
                                         style: const TextStyle(
-                                          overflow: TextOverflow.ellipsis,
+                                            overflow: TextOverflow.ellipsis,
                                             color: Colors.white,
                                             fontWeight: FontWeight.w400,
                                             fontSize: 15),

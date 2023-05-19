@@ -10,6 +10,7 @@ class SearchField extends StatefulWidget {
 }
 
 class _SearchFieldState extends State<SearchField> {
+  final searchTxt = TextEditingController();
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).copyWith().size.width;
@@ -20,20 +21,29 @@ class _SearchFieldState extends State<SearchField> {
         margin: const EdgeInsets.all(0),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(32),
-            border:
-                Border.all(color: const Color.fromARGB(255, 201, 210, 214)),
+            border: Border.all(color: const Color.fromARGB(255, 201, 210, 214)),
             color: const Color.fromARGB(255, 212, 218, 218)),
         child: Center(
           child: TypeAheadField(
-            
             textFieldConfiguration: TextFieldConfiguration(
-                autofocus: true,
+                controller: searchTxt,
+                // autofocus: true,
                 style: DefaultTextStyle.of(context)
                     .style
                     .copyWith(fontStyle: FontStyle.normal),
-                decoration: const InputDecoration(border: InputBorder.none)),
+                decoration: InputDecoration(
+                    border: InputBorder.none,
+                    icon: const Icon(Icons.abc_outlined),
+                    iconColor: Colors.green,
+                    hintText: "search place",
+                    suffixIconColor: Colors.blueGrey,
+                    suffixIcon: IconButton(
+                        onPressed: () {},
+                        icon: const Icon(Icons.remove_circle)))),
             suggestionsCallback: (pattern) async {
-              return await BackendService.getSuggestions(pattern);
+              var results = await BackendService.getSuggestions(pattern);
+              print(results);
+              return results;
             },
             itemBuilder: (context, suggestion) {
               return ListTile(
