@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:i_tour/services/WeatherService.dart';
 
@@ -41,8 +42,19 @@ class _SearchFieldState extends State<SearchField> {
                         onPressed: () {},
                         icon: const Icon(Icons.remove_circle)))),
             suggestionsCallback: (pattern) async {
+              // var place = await PlacesAutocomplete.show(
+              //     context: context,
+              //     apiKey: "AIzaSyDURifysCOAlU4a7E1Z8DMTCrebTCHO-PQ",
+              //     mode: Mode.overlay,
+              //     types: [],
+              //     strictbounds: false,
+              //     // components: [Component(Component.country, 'np')],
+              //     //google_map_webservice package
+              //     onError: (err) {
+              //       // print(err);
+              //     });
               var results = await BackendService.getSuggestions(pattern);
-              print(results);
+              // print(results);
               return results;
             },
             itemBuilder: (context, suggestion) {
