@@ -87,7 +87,7 @@ static void onStart(ServiceInstance service) async {
         "current_date": DateTime.now().toIso8601String(),
         "device": device,
       },
-    );
+    ); 
   });
 }
 
