@@ -8,7 +8,7 @@ class NoResultsWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final searchFlag = ref.watch(searchToggleProvider);
+    final searchPeopleFlag = ref.watch(searchPeopleToggleProvider);
     double screenWidth = MediaQuery.of(context).size.width;
     return Positioned(
         top: 100.0,
@@ -30,7 +30,7 @@ class NoResultsWidget extends ConsumerWidget {
                 width: 125.0,
                 child: ElevatedButton(
                   onPressed: () {
-                    searchFlag.toggleSearch();
+                    searchPeopleFlag.toggleSearch();
                   },
                   child: const Center(
                     child: Text(

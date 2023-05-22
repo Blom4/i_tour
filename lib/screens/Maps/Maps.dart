@@ -35,7 +35,7 @@ class _MapsState extends ConsumerState<Maps> {
 
 //Debounce to throttle async calls during search
   Timer? _debounce;
-
+  Timer? _debounce1;
 //Toggling UI as we need;
   bool searchToggle = false;
   bool searchPeopleToggle = false;
@@ -79,6 +79,7 @@ class _MapsState extends ConsumerState<Maps> {
 
 //Text Editing Controllers
   TextEditingController searchController = TextEditingController();
+  TextEditingController searchPeopleController = TextEditingController();
   final TextEditingController _originController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
 
@@ -130,6 +131,7 @@ class _MapsState extends ConsumerState<Maps> {
       getDirections = false;
       searchToggle = false;
       radiusSlider = true;
+      searchPeopleToggle = false;
     });
   }
 
@@ -222,8 +224,9 @@ class _MapsState extends ConsumerState<Maps> {
 
     //Providers
     final allSearchResults = ref.watch(placeResultsProvider);
+    final allSearchPeopleResults = ref.watch(peopleResultsProvider);
     final searchFlag = ref.watch(searchToggleProvider);
-
+    final searchPeopleFlag = ref.watch(searchPeopleToggleProvider);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -290,45 +293,68 @@ class _MapsState extends ConsumerState<Maps> {
                   ),
                 if (searchPeopleToggle)
                   SearchPeopleTracking(
-                    controller: searchController,
+                    controller: searchPeopleController,
                     onPressed: () {
                       setState(() {
-                        searchToggle = false;
+                        searchPeopleToggle = false;
 
-                        searchController.text = '';
+                        searchPeopleController.text = '';
                         _markers = {};
-                        // if (searchFlag.searchToggle) {
-                        //   searchFlag.toggleSearch();
-                        // }
+                        if (searchPeopleFlag.searchToggle) {
+                          searchPeopleFlag.toggleSearch();
+                        }
                       });
                     },
                     onChanged: (value) {
-                      // if (_debounce?.isActive ?? false) {
-                      //   _debounce?.cancel();
-                      // }
-                      // _debounce = Timer(
-                      //   const Duration(milliseconds: 700),
-                      //   () async {
-                      //     if (value.length > 2) {
-                      //       if (!searchFlag.searchToggle) {
-                      //         searchFlag.toggleSearch();
-                      //         _markers = {};
-                      //       }
+                      if (_debounce1?.isActive ?? false) {
+                        _debounce1?.cancel();
+                      }
+                      _debounce1 = Timer(
+                        const Duration(milliseconds: 700),
+                        () async {
+                          if (value.length > 2) {
+                            if (!searchPeopleFlag.searchToggle) {
+                              searchPeopleFlag.toggleSearch();
+                              _markers = {};
+                            }
 
-                      //       List<AutoCompleteResult> searchResults =
-                      //           await MapServices().searchPlaces(value);
+                            // List<AutoCompleteResult> searchResults =
+                            //     await MapServices().searchPlaces(value);
 
-                      //       allSearchResults.setResults(searchResults);
-                      //     } else {
-                      //       List<AutoCompleteResult> emptyList = [];
-                      //       allSearchResults.setResults(emptyList);
-                      //     }
-                      //   },
-                      // );
+                            allSearchPeopleResults.setResults([]);
+                          } else {
+                            // List<AutoCompleteResult> emptyList = [];
+                            // allSearchResults.setResults(emptyList);
+                            allSearchPeopleResults.setResults([]);
+                          }
+                        },
+                      );
                     },
                   ),
                 if (searchFlag.searchToggle)
                   if (allSearchResults.allReturnedResults.isNotEmpty)
+                    Positioned(
+                        top: 100.0,
+                        left: 15.0,
+                        child: Container(
+                          height: 200.0,
+                          width: screenWidth - 30.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Colors.white.withOpacity(0.7),
+                          ),
+                          child: ListView(
+                            children: [
+                              ...allSearchResults.allReturnedResults
+                                  .map((e) => buildListItem(e, searchFlag))
+                                  .toList()
+                            ],
+                          ),
+                        ))
+                  else
+                    const NoResultsWidget(),
+                if (searchPeopleFlag.searchToggle)
+                  if (allSearchPeopleResults.allReturnedResults.isNotEmpty)
                     Positioned(
                         top: 100.0,
                         left: 15.0,
