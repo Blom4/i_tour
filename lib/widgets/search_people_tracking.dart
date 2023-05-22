@@ -30,7 +30,7 @@ class SearchPeopleTracking extends StatelessWidget {
               contentPadding:
                   const EdgeInsets.symmetric(horizontal: 20.0, vertical: 15.0),
               border: InputBorder.none,
-              hintText: 'Search People',
+              hintText: 'Search People by Email',
               suffixIcon: IconButton(
                 onPressed: onPressed,
                 icon: const Icon(Icons.close),

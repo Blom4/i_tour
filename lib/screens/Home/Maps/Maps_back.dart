@@ -10,18 +10,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:i_tour/constants/constants.dart';
-import 'package:i_tour/widgets/search_people_tracking.dart';
 
 import 'dart:ui' as ui;
 
-import '../../models/auto_complete_result.dart';
-import '../../providers/search_places.dart';
-import '../../services/map_services.dart';
-import '../../widgets/distination_field_widget.dart';
-import '../../widgets/near_me_places_widget.dart';
-import '../../widgets/no_results_Widget.dart';
-import '../../widgets/origin_field_widget.dart';
-import '../../widgets/search_places_widget.dart';
+import '../../../models/auto_complete_result.dart';
+import '../../../providers/search_places.dart';
+import '../../../services/map_services.dart';
+import '../../../widgets/distination_field_widget.dart';
+import '../../../widgets/near_me_places_widget.dart';
+import '../../../widgets/no_results_Widget.dart';
+import '../../../widgets/origin_field_widget.dart';
+import '../../../widgets/search_places_widget.dart';
 
 class Maps extends ConsumerStatefulWidget {
   const Maps({Key? key}) : super(key: key);
@@ -35,10 +34,9 @@ class _MapsState extends ConsumerState<Maps> {
 
 //Debounce to throttle async calls during search
   Timer? _debounce;
-  Timer? _debounce1;
+
 //Toggling UI as we need;
   bool searchToggle = false;
-  bool searchPeopleToggle = false;
   bool radiusSlider = false;
   bool cardTapped = false;
   bool pressedNear = false;
@@ -79,7 +77,6 @@ class _MapsState extends ConsumerState<Maps> {
 
 //Text Editing Controllers
   TextEditingController searchController = TextEditingController();
-  TextEditingController searchPeopleController = TextEditingController();
   final TextEditingController _originController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
 
@@ -131,7 +128,6 @@ class _MapsState extends ConsumerState<Maps> {
       getDirections = false;
       searchToggle = false;
       radiusSlider = true;
-      searchPeopleToggle = false;
     });
   }
 
@@ -224,9 +220,8 @@ class _MapsState extends ConsumerState<Maps> {
 
     //Providers
     final allSearchResults = ref.watch(placeResultsProvider);
-    final allSearchPeopleResults = ref.watch(peopleResultsProvider);
     final searchFlag = ref.watch(searchToggleProvider);
-    final searchPeopleFlag = ref.watch(searchPeopleToggleProvider);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -291,46 +286,6 @@ class _MapsState extends ConsumerState<Maps> {
                       );
                     },
                   ),
-                if (searchPeopleToggle)
-                  SearchPeopleTracking(
-                    controller: searchPeopleController,
-                    onPressed: () {
-                      setState(() {
-                        searchPeopleToggle = false;
-
-                        searchPeopleController.text = '';
-                        _markers = {};
-                        if (searchPeopleFlag.searchToggle) {
-                          searchPeopleFlag.toggleSearch();
-                        }
-                      });
-                    },
-                    onChanged: (value) {
-                      if (_debounce1?.isActive ?? false) {
-                        _debounce1?.cancel();
-                      }
-                      _debounce1 = Timer(
-                        const Duration(milliseconds: 700),
-                        () async {
-                          if (value.length > 2) {
-                            if (!searchPeopleFlag.searchToggle) {
-                              searchPeopleFlag.toggleSearch();
-                              _markers = {};
-                            }
-
-                            // List<AutoCompleteResult> searchResults =
-                            //     await MapServices().searchPlaces(value);
-
-                            allSearchPeopleResults.setResults([]);
-                          } else {
-                            // List<AutoCompleteResult> emptyList = [];
-                            // allSearchResults.setResults(emptyList);
-                            allSearchPeopleResults.setResults([]);
-                          }
-                        },
-                      );
-                    },
-                  ),
                 if (searchFlag.searchToggle)
                   if (allSearchResults.allReturnedResults.isNotEmpty)
                     Positioned(
@@ -353,29 +308,43 @@ class _MapsState extends ConsumerState<Maps> {
                         ))
                   else
                     const NoResultsWidget(),
-                if (searchPeopleFlag.searchToggle)
-                  if (allSearchPeopleResults.allReturnedResults.isNotEmpty)
-                    Positioned(
-                        top: 100.0,
-                        left: 15.0,
-                        child: Container(
-                          height: 200.0,
-                          width: screenWidth - 30.0,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            color: Colors.white.withOpacity(0.7),
-                          ),
-                          child: ListView(
-                            children: [
-                              ...allSearchResults.allReturnedResults
-                                  .map((e) => buildListItem(e, searchFlag))
-                                  .toList()
-                            ],
-                          ),
-                        ))
-                  else
-                    const NoResultsWidget(),
-                // remove directions
+                if (getDirections)
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15.0, 40.0, 15.0, 5),
+                    child: Column(children: [
+                      OriginFieldWidget(
+                        controller: _originController,
+                      ),
+                      const SizedBox(height: 3.0),
+                      DestinationFieldWidget(
+                        controller: _destinationController,
+                        onSearchPressed: () async {
+                          var directions = await MapServices().getDirections(
+                              _originController.text,
+                              _destinationController.text);
+                          _markers = {};
+                          _polylines = {};
+                          gotoPlace(
+                              directions['start_location']['lat'],
+                              directions['start_location']['lng'],
+                              directions['end_location']['lat'],
+                              directions['end_location']['lng'],
+                              directions['bounds_ne'],
+                              directions['bounds_sw']);
+                          _setPolyline(directions['polyline_decoded']);
+                        },
+                        onClosePressed: () {
+                          setState(() {
+                            getDirections = false;
+                            _originController.text = '';
+                            _destinationController.text = '';
+                            _markers = {};
+                            _polylines = {};
+                          });
+                        },
+                      )
+                    ]),
+                  ),
                 if (radiusSlider)
                   NearMePlacesWidget(
                     radiusValue: radiusValue,
@@ -493,7 +462,6 @@ class _MapsState extends ConsumerState<Maps> {
             IconButton(
                 onPressed: () {
                   setState(() {
-                    searchPeopleToggle = false;
                     searchToggle = true;
                     radiusSlider = false;
                     pressedNear = false;
@@ -502,43 +470,17 @@ class _MapsState extends ConsumerState<Maps> {
                   });
                 },
                 icon: const Icon(Icons.search)),
-            // IconButton(
-            //     onPressed: () {
-            //       setState(() {
-            //         searchToggle = false;
-            //         radiusSlider = false;
-            //         pressedNear = false;
-            //         cardTapped = false;
-            //         getDirections = true;
-            //       });
-            //     },
-            //     icon: const Icon(Icons.navigation)),
-
             IconButton(
                 onPressed: () {
                   setState(() {
                     searchToggle = false;
                     radiusSlider = false;
-                    searchPeopleToggle = true;
                     pressedNear = false;
                     cardTapped = false;
-                    getDirections = false;
+                    getDirections = true;
                   });
                 },
-                icon: const Icon(
-                  Icons.people_outline_sharp,
-                  color: Colors.blueAccent,
-                )),
-            IconButton(
-                onPressed: () {
-                  setState(() {
-                    searchPeopleToggle = false;
-                  });
-                },
-                icon: const Icon(
-                  Icons.pin_drop,
-                  color: Colors.red,
-                )),
+                icon: const Icon(Icons.navigation))
           ]),
     );
   }

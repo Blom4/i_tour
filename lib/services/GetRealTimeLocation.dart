@@ -88,7 +88,7 @@ class RealTimelocationUpdateService {
         final iosInfo = await deviceInfo.iosInfo;
         device = iosInfo.model;
       }
-      print(device);
+      // print(device);
       service.invoke(
         'update',
         {

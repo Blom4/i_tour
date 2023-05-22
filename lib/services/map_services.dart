@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:i_tour/logic/firebase_auth.dart';
 import 'dart:convert' as convert;
 
 import '../constants/constants.dart';
@@ -57,6 +59,27 @@ class MapServices {
     };
 
     return results;
+  }
+
+  Future<List<Map>> fetchMonitoringPeopleForMap() async {
+    List<Map> found = [];
+    var results = await firebaseInstance.collection("User").get();
+
+    for (QueryDocumentSnapshot<Map<String, dynamic>> document in results.docs) {
+      if (document.data()['email'].toString().toLowerCase() !=
+          Auth().currentUser!.email.toString().toLowerCase()) {
+        for (DocumentReference<Map<String, dynamic>> item
+            in document.data()['monitor'] ?? []) {
+          var value = await item.get();
+          var user = value.data() ?? {};
+          if (user['email'].toString().toLowerCase() ==
+              Auth().currentUser!.email.toString().toLowerCase()) {
+            found.add({"document": document, "document_data": document.data()});
+          }
+        }
+      }
+    }
+    return found;
   }
 
   Future<dynamic> getPlaceDetails(LatLng coords, int radius) async {

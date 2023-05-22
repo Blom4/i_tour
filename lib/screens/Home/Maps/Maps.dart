@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
@@ -10,17 +11,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:i_tour/constants/constants.dart';
+import 'package:i_tour/widgets/search_people_tracking.dart';
 
 import 'dart:ui' as ui;
 
-import '../../models/auto_complete_result.dart';
-import '../../providers/search_places.dart';
-import '../../services/map_services.dart';
-import '../../widgets/distination_field_widget.dart';
-import '../../widgets/near_me_places_widget.dart';
-import '../../widgets/no_results_Widget.dart';
-import '../../widgets/origin_field_widget.dart';
-import '../../widgets/search_places_widget.dart';
+import '../../../models/auto_complete_result.dart';
+import '../../../providers/search_places.dart';
+import '../../../services/map_services.dart';
+import '../../../widgets/distination_field_widget.dart';
+import '../../../widgets/near_me_places_widget.dart';
+import '../../../widgets/no_results_Widget.dart';
+import '../../../widgets/origin_field_widget.dart';
+import '../../../widgets/search_places_widget.dart';
 
 class Maps extends ConsumerStatefulWidget {
   const Maps({Key? key}) : super(key: key);
@@ -34,9 +36,10 @@ class _MapsState extends ConsumerState<Maps> {
 
 //Debounce to throttle async calls during search
   Timer? _debounce;
-
+  Timer? _debounce1;
 //Toggling UI as we need;
   bool searchToggle = false;
+  bool searchPeopleToggle = false;
   bool radiusSlider = false;
   bool cardTapped = false;
   bool pressedNear = false;
@@ -67,7 +70,8 @@ class _MapsState extends ConsumerState<Maps> {
   bool showBlankCard = false;
   bool isReviews = true;
   bool isPhotos = false;
-
+  bool isSatalliteView = false;
+  DocumentReference<Map<String, dynamic>>? selectedPerson;
   final key = '<yourkeyhere>';
 
   var selectedPlaceDetails;
@@ -77,6 +81,7 @@ class _MapsState extends ConsumerState<Maps> {
 
 //Text Editing Controllers
   TextEditingController searchController = TextEditingController();
+  TextEditingController searchPeopleController = TextEditingController();
   final TextEditingController _originController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
 
@@ -128,6 +133,7 @@ class _MapsState extends ConsumerState<Maps> {
       getDirections = false;
       searchToggle = false;
       radiusSlider = true;
+      searchPeopleToggle = false;
     });
   }
 
@@ -220,8 +226,9 @@ class _MapsState extends ConsumerState<Maps> {
 
     //Providers
     final allSearchResults = ref.watch(placeResultsProvider);
+    final allSearchPeopleResults = ref.watch(peopleResultsProvider);
     final searchFlag = ref.watch(searchToggleProvider);
-
+    final searchPeopleFlag = ref.watch(searchPeopleToggleProvider);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -232,7 +239,8 @@ class _MapsState extends ConsumerState<Maps> {
                   height: screenHeight,
                   width: screenWidth,
                   child: GoogleMap(
-                    mapType: MapType.normal,
+                    mapType:
+                        isSatalliteView ? MapType.satellite : MapType.normal,
                     markers: _markers,
                     polylines: _polylines,
                     circles: _circles,
@@ -286,6 +294,52 @@ class _MapsState extends ConsumerState<Maps> {
                       );
                     },
                   ),
+                if (searchPeopleToggle)
+                  SearchPeopleTracking(
+                    controller: searchPeopleController,
+                    onPressed: () {
+                      setState(() {
+                        searchPeopleToggle = false;
+
+                        searchPeopleController.text = '';
+                        _markers = {};
+                        if (searchPeopleFlag.searchToggle) {
+                          searchPeopleFlag.toggleSearch();
+                        }
+                      });
+                    },
+                    onChanged: (value) {
+                      if (_debounce1?.isActive ?? false) {
+                        _debounce1?.cancel();
+                      }
+                      _debounce1 = Timer(
+                        const Duration(milliseconds: 700),
+                        () async {
+                          if (value.length > 2) {
+                            if (!searchPeopleFlag.searchToggle) {
+                              searchPeopleFlag.toggleSearch();
+                              _markers = {};
+                            }
+
+                            List<Map> searchResults = await MapServices()
+                                .fetchMonitoringPeopleForMap();
+                            // print(searchResults);
+                            searchResults = searchResults.where((element) {
+                              return element['document_data']['email']
+                                  .toString()
+                                  .contains(value.toString().toLowerCase());
+                            }).toList();
+
+                            allSearchPeopleResults.setResults(searchResults);
+                          } else {
+                            // List<AutoCompleteResult> emptyList = [];
+                            // allSearchResults.setResults(emptyList);
+                            allSearchPeopleResults.setResults([]);
+                          }
+                        },
+                      );
+                    },
+                  ),
                 if (searchFlag.searchToggle)
                   if (allSearchResults.allReturnedResults.isNotEmpty)
                     Positioned(
@@ -301,50 +355,38 @@ class _MapsState extends ConsumerState<Maps> {
                           child: ListView(
                             children: [
                               ...allSearchResults.allReturnedResults
-                                  .map((e) => buildListItem(e, searchFlag))
+                                  .map(
+                                      (item) => buildListItem(item, searchFlag))
                                   .toList()
                             ],
                           ),
                         ))
                   else
                     const NoResultsWidget(),
-                if (getDirections)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(15.0, 40.0, 15.0, 5),
-                    child: Column(children: [
-                      OriginFieldWidget(
-                        controller: _originController,
-                      ),
-                      const SizedBox(height: 3.0),
-                      DestinationFieldWidget(
-                        controller: _destinationController,
-                        onSearchPressed: () async {
-                          var directions = await MapServices().getDirections(
-                              _originController.text,
-                              _destinationController.text);
-                          _markers = {};
-                          _polylines = {};
-                          gotoPlace(
-                              directions['start_location']['lat'],
-                              directions['start_location']['lng'],
-                              directions['end_location']['lat'],
-                              directions['end_location']['lng'],
-                              directions['bounds_ne'],
-                              directions['bounds_sw']);
-                          _setPolyline(directions['polyline_decoded']);
-                        },
-                        onClosePressed: () {
-                          setState(() {
-                            getDirections = false;
-                            _originController.text = '';
-                            _destinationController.text = '';
-                            _markers = {};
-                            _polylines = {};
-                          });
-                        },
-                      )
-                    ]),
-                  ),
+                if (searchPeopleFlag.searchToggle)
+                  if (allSearchPeopleResults.allReturnedResults.isNotEmpty)
+                    Positioned(
+                        top: 100.0,
+                        left: 15.0,
+                        child: Container(
+                          height: 150.0,
+                          width: screenWidth - 30.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            color: Colors.white.withOpacity(0.7),
+                          ),
+                          child: ListView(
+                            children: [
+                              ...allSearchPeopleResults.allReturnedResults
+                                  .map((e) =>
+                                      buildListPeopleItem(e, searchPeopleFlag))
+                                  .toList()
+                            ],
+                          ),
+                        ))
+                  else
+                    const NoResultsWidget(),
+                // remove directions
                 if (radiusSlider)
                   NearMePlacesWidget(
                     radiusValue: radiusValue,
@@ -460,8 +502,11 @@ class _MapsState extends ConsumerState<Maps> {
           fabSize: 60.0,
           children: [
             IconButton(
+                // icon button that opens a search for google places to view
                 onPressed: () {
                   setState(() {
+                    selectedPerson = null;
+                    searchPeopleToggle = false;
                     searchToggle = true;
                     radiusSlider = false;
                     pressedNear = false;
@@ -471,16 +516,52 @@ class _MapsState extends ConsumerState<Maps> {
                 },
                 icon: const Icon(Icons.search)),
             IconButton(
+                // icon button that opens search people that one is monitoring
                 onPressed: () {
                   setState(() {
+                    selectedPerson = null;
+                    searchToggle = false;
+                    radiusSlider = false;
+                    searchPeopleToggle = true;
+                    pressedNear = false;
+                    cardTapped = false;
+                    getDirections = false;
+                  });
+                },
+                icon: const Icon(
+                  Icons.people_outline_sharp,
+                  color: Colors.blueAccent,
+                )),
+            IconButton(
+                // icon botton that make cameraPosition to return to my current location
+                onPressed: () async {
+                  setState(() {
+                    selectedPerson = null;
+                    searchPeopleToggle = false;
                     searchToggle = false;
                     radiusSlider = false;
                     pressedNear = false;
                     cardTapped = false;
-                    getDirections = true;
+                    getDirections = false;
+                  });
+                  await _findMyLoction();
+                },
+                icon: const Icon(
+                  Icons.pin_drop,
+                  color: Colors.red,
+                )),
+            IconButton(
+                // icon button for change map type eg satellite view
+                onPressed: () {
+                  setState(() {
+                    
+                    isSatalliteView = !isSatalliteView;
                   });
                 },
-                icon: const Icon(Icons.navigation))
+                icon: const Icon(
+                  Icons.map,
+                  color: Colors.blue,
+                ))
           ]),
     );
   }
@@ -1068,6 +1149,42 @@ class _MapsState extends ConsumerState<Maps> {
     );
   }
 
+  Widget buildListPeopleItem(Map peopleItem, searchPeopleFlag) {
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: GestureDetector(
+        onTapDown: (_) {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        onTap: () async {
+          // var place = await MapServices().getPlace(placeItem.placeId);
+          // gotoSearchedPlace(place['geometry']['location']['lat'],
+          //     place['geometry']['location']['lng']);
+          // searchFlag.toggleSearch();
+          setState(() {
+            selectedPerson = peopleItem['document'];
+          });
+          // print();
+        },
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(Icons.location_on, color: Colors.green, size: 25.0),
+            const SizedBox(width: 4.0),
+            SizedBox(
+              height: 40.0,
+              width: MediaQuery.of(context).size.width - 75.0,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(peopleItem['document_data']['full_name'] ?? ''),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _findMyLoction() async {
     final GoogleMapController controller = await _controller.future;
     Position pos = await determinePosition();
@@ -1078,17 +1195,18 @@ class _MapsState extends ConsumerState<Maps> {
       zoom: 14,
     );
     controller.animateCamera(CameraUpdate.newCameraPosition(currPos));
-    _markers.clear();
-    _markers.add(
-      Marker(
-        markerId: const MarkerId(
-          "Current Position",
-        ),
-        position: LatLng(pos.latitude, pos.longitude),
-      ),
-    );
 
-    setState(() {});
+    setState(() {
+      _markers.clear();
+      _markers.add(
+        Marker(
+          markerId: const MarkerId(
+            "Current Position",
+          ),
+          position: LatLng(pos.latitude, pos.longitude),
+        ),
+      );
+    });
   }
 
   // Future<Position> _determinePosition() async {
