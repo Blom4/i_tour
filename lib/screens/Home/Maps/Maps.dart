@@ -18,10 +18,8 @@ import 'dart:ui' as ui;
 import '../../../models/auto_complete_result.dart';
 import '../../../providers/search_places.dart';
 import '../../../services/map_services.dart';
-import '../../../widgets/distination_field_widget.dart';
 import '../../../widgets/near_me_places_widget.dart';
 import '../../../widgets/no_results_Widget.dart';
-import '../../../widgets/origin_field_widget.dart';
 import '../../../widgets/search_places_widget.dart';
 
 class Maps extends ConsumerStatefulWidget {
@@ -554,7 +552,6 @@ class _MapsState extends ConsumerState<Maps> {
                 // icon button for change map type eg satellite view
                 onPressed: () {
                   setState(() {
-                    
                     isSatalliteView = !isSatalliteView;
                   });
                 },
