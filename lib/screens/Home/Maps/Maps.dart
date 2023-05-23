@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
@@ -12,6 +13,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:i_tour/constants/constants.dart';
 import 'package:i_tour/widgets/search_people_tracking.dart';
+import 'package:lottie/lottie.dart' as Lottie;
 
 import 'dart:ui' as ui;
 
@@ -30,8 +32,8 @@ class Maps extends ConsumerStatefulWidget {
 }
 
 class _MapsState extends ConsumerState<Maps> {
-  final Completer<GoogleMapController> _controller = Completer();
-
+  Completer<GoogleMapController> _controller = Completer();
+  late GoogleMapController _controller2;
 //Debounce to throttle async calls during search
   Timer? _debounce;
   Timer? _debounce1;
@@ -42,7 +44,7 @@ class _MapsState extends ConsumerState<Maps> {
   bool cardTapped = false;
   bool pressedNear = false;
   bool getDirections = false;
-
+  bool isMonitorMapCreated = false;
 //Markers set
   Set<Marker> _markers = <Marker>{};
   Set<Marker> _markersDupe = <Marker>{};
@@ -69,7 +71,7 @@ class _MapsState extends ConsumerState<Maps> {
   bool isReviews = true;
   bool isPhotos = false;
   bool isSatalliteView = false;
-  DocumentReference<Map<String, dynamic>>? selectedPerson;
+  QueryDocumentSnapshot<Map<String, dynamic>>? selectedPerson;
   final key = '<yourkeyhere>';
 
   var selectedPlaceDetails;
@@ -116,9 +118,9 @@ class _MapsState extends ConsumerState<Maps> {
   }
 
   void _setCircle(LatLng point) async {
-    final GoogleMapController controller = await _controller.future;
+    // final GoogleMapController controller = await _controller.future;
 
-    controller.animateCamera(CameraUpdate.newCameraPosition(
+    _controller2.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(target: point, zoom: 12)));
     setState(() {
       _circles.add(Circle(
@@ -190,6 +192,12 @@ class _MapsState extends ConsumerState<Maps> {
     super.initState();
   }
 
+  // @override
+  // void dispose() {
+  //   _controller = Completer();
+  //   super.dispose();
+  // }
+
   void _onScroll() {
     if (_pageController.page!.toInt() != prevPage) {
       prevPage = _pageController.page!.toInt();
@@ -236,22 +244,103 @@ class _MapsState extends ConsumerState<Maps> {
                 SizedBox(
                   height: screenHeight,
                   width: screenWidth,
-                  child: GoogleMap(
-                    mapType:
-                        isSatalliteView ? MapType.satellite : MapType.normal,
-                    markers: _markers,
-                    polylines: _polylines,
-                    circles: _circles,
-                    initialCameraPosition: _kGooglePlex,
-                    onMapCreated: (GoogleMapController controller) async {
-                      _controller.complete(controller);
-                      await _findMyLoction();
-                    },
-                    onTap: (point) {
-                      tappedPoint = point;
-                      _setCircle(point);
-                    },
-                  ),
+                  child: selectedPerson == null
+                      ? GoogleMap(
+                          mapType: isSatalliteView
+                              ? MapType.satellite
+                              : MapType.normal,
+                          markers: _markers,
+                          polylines: _polylines,
+                          circles: _circles,
+                          initialCameraPosition: _kGooglePlex,
+                          onMapCreated: (GoogleMapController controller) async {
+                            // if (!_controller.isCompleted) {
+                            //   _controller.complete(controller);
+                            // }
+                            setState(() {
+                              _controller2 = controller;
+                            });
+                            await _findMyLocation();
+                          },
+                          onTap: (point) {
+                            tappedPoint = point;
+                            _setCircle(point);
+                          },
+                        )
+                      : StreamBuilder(
+                          stream: selectedPerson?.reference.snapshots(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return const SizedBox();
+                            }
+                            if (!snapshot.data!.exists) {
+                              return const SizedBox();
+                            }
+                            if (isMonitorMapCreated) {
+                              gotoSelectedPerson(
+                                  snapshot.data!
+                                      .data()!['liveLocation']
+                                      .latitude,
+                                  snapshot.data!
+                                      .data()!['liveLocation']
+                                      .longitude);
+                            }
+                            return GoogleMap(
+                              mapType: isSatalliteView
+                                  ? MapType.satellite
+                                  : MapType.normal,
+                              markers: {
+                                Marker(
+                                    markerId: MarkerId(
+                                        'marker_${Random().nextDouble()}'),
+                                    position: LatLng(
+                                        snapshot.data!
+                                            .data()!['liveLocation']
+                                            .latitude,
+                                        snapshot.data!
+                                            .data()!['liveLocation']
+                                            .longitude),
+                                    onTap: () {},
+                                    icon: BitmapDescriptor.defaultMarker)
+                              },
+                              polylines: _polylines,
+                              circles: _circles,
+                              initialCameraPosition:
+                                  snapshot.data!.data()!['liveLocation'] != null
+                                      ? CameraPosition(
+                                          target: LatLng(
+                                              snapshot.data!
+                                                  .data()!['liveLocation']
+                                                  .latitude,
+                                              snapshot.data!
+                                                  .data()!['liveLocation']
+                                                  .longitude),
+                                          zoom: 14.4746,
+                                        )
+                                      : _kGooglePlex,
+                              onMapCreated:
+                                  (GoogleMapController controller) async {
+                                // _controller.complete(controller);
+                                setState(() {
+                                  isMonitorMapCreated = true;
+                                  _controller2 = controller;
+                                });
+                                // await _findMyLoction();
+                              },
+                              onTap: (point) {
+                                setState(() {
+                                  searchPeopleToggle = false;
+                                  searchToggle = false;
+                                  radiusSlider = false;
+                                  pressedNear = false;
+                                  cardTapped = false;
+                                  getDirections = false;
+                                  selectedPerson = null;
+                                });
+                              },
+                            );
+                          },
+                        ),
                 ),
                 if (searchToggle)
                   SearchPlacesWidget(
@@ -542,7 +631,10 @@ class _MapsState extends ConsumerState<Maps> {
                     cardTapped = false;
                     getDirections = false;
                   });
-                  await _findMyLoction();
+                  if (searchFlag.searchToggle) {
+                    searchFlag.toggleSearch();
+                  }
+                  await _findMyLocation();
                 },
                 icon: const Icon(
                   Icons.pin_drop,
@@ -905,9 +997,9 @@ class _MapsState extends ConsumerState<Maps> {
 
   Future<void> gotoPlace(double lat, double lng, double endLat, double endLng,
       Map<String, dynamic> boundsNe, Map<String, dynamic> boundsSw) async {
-    final GoogleMapController controller = await _controller.future;
+    // final GoogleMapController controller = await _controller.future;
 
-    controller.animateCamera(CameraUpdate.newLatLngBounds(
+    _controller2.animateCamera(CameraUpdate.newLatLngBounds(
         LatLngBounds(
             southwest: LatLng(boundsSw['lat'], boundsSw['lng']),
             northeast: LatLng(boundsNe['lat'], boundsNe['lng'])),
@@ -918,9 +1010,9 @@ class _MapsState extends ConsumerState<Maps> {
   }
 
   Future<void> moveCameraSlightly() async {
-    final GoogleMapController controller = await _controller.future;
+    // final GoogleMapController controller = await _controller.future;
 
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+    _controller2.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(
             allFavoritePlaces[_pageController.page!.toInt()]['geometry']
                     ['location']['lat'] +
@@ -1082,7 +1174,7 @@ class _MapsState extends ConsumerState<Maps> {
 
   Future<void> goToTappedPlace() async {
     // on tapping place on map camera points at that direction
-    final GoogleMapController controller = await _controller.future;
+    // final GoogleMapController controller = await _controller.future;
 
     _markers = {};
 
@@ -1096,7 +1188,7 @@ class _MapsState extends ConsumerState<Maps> {
         selectedPlace['types'],
         selectedPlace['business_status'] ?? 'none');
 
-    controller.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
+    _controller2.animateCamera(CameraUpdate.newCameraPosition(CameraPosition(
         target: LatLng(selectedPlace['geometry']['location']['lat'],
             selectedPlace['geometry']['location']['lng']),
         zoom: 14.0,
@@ -1106,12 +1198,22 @@ class _MapsState extends ConsumerState<Maps> {
 
   Future<void> gotoSearchedPlace(double lat, double lng) async {
     // search place ,type name and suggestion tap on it the camera points to that position
-    final GoogleMapController controller = await _controller.future;
+    // final GoogleMapController controller = await _controller.future;
 
-    controller.animateCamera(CameraUpdate.newCameraPosition(
+    _controller2.animateCamera(CameraUpdate.newCameraPosition(
         CameraPosition(target: LatLng(lat, lng), zoom: 12)));
 
     _setMarker(LatLng(lat, lng));
+  }
+
+  Future<void> gotoSelectedPerson(double lat, double lng) async {
+    // search place ,type name and suggestion tap on it the camera points to that position
+    // final GoogleMapController controller = await _controller.future;
+
+    _controller2.animateCamera(CameraUpdate.newCameraPosition(
+        CameraPosition(target: LatLng(lat, lng), zoom: 12)));
+
+    // _setMarker(LatLng(lat, lng));
   }
 
   Widget buildListItem(AutoCompleteResult placeItem, searchFlag) {
@@ -1147,6 +1249,7 @@ class _MapsState extends ConsumerState<Maps> {
   }
 
   Widget buildListPeopleItem(Map peopleItem, searchPeopleFlag) {
+    // print(peopleItem.runtimeType);
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: GestureDetector(
@@ -1158,10 +1261,11 @@ class _MapsState extends ConsumerState<Maps> {
           // gotoSearchedPlace(place['geometry']['location']['lat'],
           //     place['geometry']['location']['lng']);
           // searchFlag.toggleSearch();
+
           setState(() {
             selectedPerson = peopleItem['document'];
           });
-          // print();
+          // print(peopleItem['document'].runtimeType);
         },
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -1182,8 +1286,8 @@ class _MapsState extends ConsumerState<Maps> {
     );
   }
 
-  Future<void> _findMyLoction() async {
-    final GoogleMapController controller = await _controller.future;
+  Future<void> _findMyLocation() async {
+    // final GoogleMapController controller = await _controller.future;
     Position pos = await determinePosition();
     CameraPosition currPos = CameraPosition(
       bearing: 192.8334901395799,
@@ -1191,7 +1295,7 @@ class _MapsState extends ConsumerState<Maps> {
       tilt: 59.440717697143555,
       zoom: 14,
     );
-    controller.animateCamera(CameraUpdate.newCameraPosition(currPos));
+    _controller2.animateCamera(CameraUpdate.newCameraPosition(currPos));
 
     setState(() {
       _markers.clear();

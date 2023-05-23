@@ -75,6 +75,7 @@ class MapServices {
           if (user['email'].toString().toLowerCase() ==
               Auth().currentUser!.email.toString().toLowerCase()) {
             found.add({"document": document, "document_data": document.data()});
+            break;
           }
         }
       }
