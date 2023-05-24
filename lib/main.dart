@@ -1,12 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:i_tour/constants/constants.dart';
 import 'package:i_tour/screens/Login/login_screen.dart';
 import 'package:i_tour/services/GetRealTimeLocation.dart';
 import 'package:i_tour/store/store.dart';
 import 'package:lottie/lottie.dart';
 import 'firebase_options.dart';
-//import 'screens/home_page.dart';
 import 'package:get/get.dart';
 
 void main() async {
@@ -14,7 +14,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  // await RealTimelocationUpdateService.initializeService();
+  await determinePosition();
+  await RealTimelocationUpdateService.initializeService();
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -46,6 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     Future.delayed(const Duration(seconds: 5)).then(
       (value) => Navigator.of(context).pushReplacement(
         MaterialPageRoute(

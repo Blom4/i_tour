@@ -5,7 +5,8 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
-import 'package:location/location.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:i_tour/constants/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RealTimelocationUpdateService {
@@ -71,12 +72,12 @@ class RealTimelocationUpdateService {
       service.stopSelf();
     });
 
-    // bring to foreground
     Timer.periodic(const Duration(seconds: 1), (timer) async {
       /// you can see this log in logcat
       // print('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');
 
       // test using external plugin
+
       final deviceInfo = DeviceInfoPlugin();
       String? device;
       if (Platform.isAndroid) {
@@ -88,7 +89,24 @@ class RealTimelocationUpdateService {
         final iosInfo = await deviceInfo.iosInfo;
         device = iosInfo.model;
       }
-      // print(device);
+      // try {
+      //   // var res = await determinePosition();
+      //   LocationSettings locationSettings = const LocationSettings(
+      //     accuracy: LocationAccuracy.high,
+      //     distanceFilter: 100,
+      //   );
+
+      //   var positionStream = await Geolocator.getPositionStream(
+      //           locationSettings: locationSettings)
+      //       .listen((position) {
+      //     // Do something with the new position
+      //     print(position);
+      //   }).asFuture();
+      //   // print(res);
+      // } catch (e) {
+      //   print(e);
+      // }
+      print(device);
       service.invoke(
         'update',
         {
