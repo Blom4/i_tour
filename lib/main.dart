@@ -1,3 +1,4 @@
+// import 'package:background_location/background_location.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,6 +15,11 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  // await BackgroundLocation.setAndroidNotification(
+  //   title: 'Background service is running',
+  //   message: 'Background location in progress',
+  //   // icon: '@mipmap/ic_launcher',
+  // );
   await determinePosition();
   await RealTimelocationUpdateService.initializeService();
   runApp(const ProviderScope(child: MyApp()));

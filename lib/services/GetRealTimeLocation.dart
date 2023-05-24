@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:i_tour/constants/constants.dart';
+import 'package:i_tour/logic/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RealTimelocationUpdateService {
@@ -58,7 +61,7 @@ class RealTimelocationUpdateService {
   static void onStart(ServiceInstance service) async {
     // Only available for flutter 3.0.0 and later
     DartPluginRegistrant.ensureInitialized();
-
+    await Firebase.initializeApp();
     // For flutter prior to version 3.0.0
     // We have to register the plugin manually
 
@@ -89,24 +92,35 @@ class RealTimelocationUpdateService {
         final iosInfo = await deviceInfo.iosInfo;
         device = iosInfo.model;
       }
-      // try {
-      //   // var res = await determinePosition();
-      //   LocationSettings locationSettings = const LocationSettings(
-      //     accuracy: LocationAccuracy.high,
-      //     distanceFilter: 100,
-      //   );
+      try {
+        LocationSettings locationSettings = const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 100,
+        );
+        bool isAuthenticated = false;
+        Auth().firebaseAuth.authStateChanges().listen((user) {
+          if (user != null) {
+            isAuthenticated = true;
+          } else {
+            isAuthenticated = false;
+          }
+        });
+        Geolocator.getPositionStream(locationSettings: locationSettings).listen((event) async {
+          if (isAuthenticated) {
+            var ref = await firebaseInstance
+                .collection("User")
+                .where("email", isEqualTo: Auth().currentUser!.email)
+                .get();
+            await ref.docs.first.reference.update({"liveLocation":GeoPoint(event.latitude, event.longitude)});
+            
+          } else {
+            print("Not Authicated");
+          }
+        });
+      } catch (e) {
+        print(e);
+      }
 
-      //   var positionStream = await Geolocator.getPositionStream(
-      //           locationSettings: locationSettings)
-      //       .listen((position) {
-      //     // Do something with the new position
-      //     print(position);
-      //   }).asFuture();
-      //   // print(res);
-      // } catch (e) {
-      //   print(e);
-      // }
-      print(device);
       service.invoke(
         'update',
         {

@@ -5,13 +5,13 @@ import 'package:get/get.dart';
 import 'package:i_tour/constants/constants.dart';
 
 class Auth {
-  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
-  User? get currentUser => _firebaseAuth.currentUser;
-  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
+  final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+  User? get currentUser => firebaseAuth.currentUser;
+  Stream<User?> get authStateChanges => firebaseAuth.authStateChanges();
 
   Future<void> signWithEmailAndPassword(
       {required String email, required String password}) async {
-    await _firebaseAuth.signInWithEmailAndPassword(
+    await firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
   }
 
@@ -22,7 +22,7 @@ class Auth {
         // _firebaseAuth.sendEmailVerification()
     try {
       Position pos = await determinePosition();
-      await _firebaseAuth.createUserWithEmailAndPassword(
+      await firebaseAuth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
@@ -48,6 +48,6 @@ class Auth {
   }
 
   Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+    await firebaseAuth.signOut();
   }
 }
