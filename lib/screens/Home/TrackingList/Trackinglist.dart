@@ -129,11 +129,7 @@ class _TrackingListState extends State<TrackingList> {
                       TextField(
                         onChanged: (value) async {
                           // print(value);
-                          setState(
-                            () {
-                              isLoading = true;
-                            },
-                          );
+
                           if (Auth().currentUser!.email!.toLowerCase() !=
                               value.toLowerCase()) {
                             // search for current auth user
@@ -158,7 +154,7 @@ class _TrackingListState extends State<TrackingList> {
                                           .toLowerCase())
                                   .get();
                               var data;
-                             
+
                               for (var element
                                   in res.docs.first.data()['monitor'] ?? []) {
                                 data = await element.get();
@@ -228,6 +224,9 @@ class _TrackingListState extends State<TrackingList> {
               TextButton(
                 child: const Text('CANCEL'),
                 onPressed: () {
+                  setState(() {
+                    isLoading = false;
+                  });
                   Navigator.of(context).pop();
                 },
               )

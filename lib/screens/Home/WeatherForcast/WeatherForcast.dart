@@ -239,10 +239,10 @@ class _WeatherForecastState extends State<WeatherForecast> {
                 ],
               ),
             ),
-            Positioned(
-                left: width * 0.03,
-                top: height * 0.055,
-                child: const SearchField()),
+            // Positioned(
+            //     left: width * 0.03,
+            //     top: height * 0.055,
+            //     child: const SearchField()),
             Positioned(
                 top: height * 0.05,
                 right: width * 0.01,

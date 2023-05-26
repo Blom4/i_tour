@@ -95,7 +95,7 @@ class RealTimelocationUpdateService {
       try {
         LocationSettings locationSettings = const LocationSettings(
           accuracy: LocationAccuracy.high,
-          distanceFilter: 100,
+          distanceFilter: 20,
         );
         bool isAuthenticated = false;
         Auth().firebaseAuth.authStateChanges().listen((user) {
