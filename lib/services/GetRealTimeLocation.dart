@@ -105,7 +105,7 @@ class RealTimelocationUpdateService {
             isAuthenticated = false;
           }
         });
-        Geolocator.getPositionStream(locationSettings: locationSettings).listen((event) async {
+        Geolocator.getPositionStream().listen((event) async {
           if (isAuthenticated) {
             var ref = await firebaseInstance
                 .collection("User")
