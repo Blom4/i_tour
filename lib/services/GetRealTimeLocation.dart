@@ -7,6 +7,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_background_service_android/flutter_background_service_android.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:i_tour/constants/constants.dart';
 import 'package:i_tour/logic/firebase_auth.dart';
@@ -18,13 +19,15 @@ class RealTimelocationUpdateService {
 
     await service.configure(
       androidConfiguration: AndroidConfiguration(
-        // this will be executed when app is in foreground or background in separated isolate
-        onStart: onStart,
 
-        // auto start service
-        autoStart: true,
-        isForegroundMode: false,
-      ),
+          // this will be executed when app is in foreground or background in separated isolate
+          onStart: onStart,
+          initialNotificationContent: "Updating Location",
+          initialNotificationTitle: "I Tour",
+          // auto start service
+          autoStart: true,
+          isForegroundMode: true,
+          autoStartOnBoot: true),
       iosConfiguration: IosConfiguration(
         // auto start service
         autoStart: true,
@@ -66,6 +69,9 @@ class RealTimelocationUpdateService {
     // We have to register the plugin manually
 
     if (service is AndroidServiceInstance) {
+      service.on('setAsForeground').listen((event) {
+        service.setAsForegroundService();
+      });
       service.on('setAsBackground').listen((event) {
         service.setAsBackgroundService();
       });
@@ -74,60 +80,94 @@ class RealTimelocationUpdateService {
     service.on('stopService').listen((event) {
       service.stopSelf();
     });
-
-    Timer.periodic(const Duration(seconds: 1), (timer) async {
-      /// you can see this log in logcat
-      // print('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');
-
-      // test using external plugin
-
-      final deviceInfo = DeviceInfoPlugin();
-      String? device;
-      if (Platform.isAndroid) {
-        final androidInfo = await deviceInfo.androidInfo;
-        device = androidInfo.model;
-      }
-
-      if (Platform.isIOS) {
-        final iosInfo = await deviceInfo.iosInfo;
-        device = iosInfo.model;
-      }
-      try {
-        LocationSettings locationSettings = const LocationSettings(
-          accuracy: LocationAccuracy.high,
-          distanceFilter: 20,
-        );
-        bool isAuthenticated = false;
-        Auth().firebaseAuth.authStateChanges().listen((user) {
-          if (user != null) {
-            isAuthenticated = true;
-          } else {
-            isAuthenticated = false;
-          }
-        });
-        Geolocator.getPositionStream().listen((event) async {
-          if (isAuthenticated) {
-            var ref = await firebaseInstance
-                .collection("User")
-                .where("email", isEqualTo: Auth().currentUser!.email)
-                .get();
-            await ref.docs.first.reference.update({"liveLocation":GeoPoint(event.latitude, event.longitude)});
-            
-          } else {
-            print("Not Authicated");
-          }
-        });
-      } catch (e) {
-        print(e);
-      }
-
-      service.invoke(
-        'update',
-        {
-          "current_date": DateTime.now().toIso8601String(),
-          "device": device,
-        },
+    try {
+      LocationSettings locationSettings = const LocationSettings(
+        accuracy: LocationAccuracy.bestForNavigation,
+        distanceFilter: 7,
       );
-    });
+      bool isAuthenticated = false;
+      Auth().firebaseAuth.authStateChanges().listen((user) {
+        if (user != null) {
+          isAuthenticated = true;
+        } else {
+          isAuthenticated = false;
+        }
+      });
+
+      Geolocator.getPositionStream(locationSettings: locationSettings)
+          .listen((event) async {
+        if (isAuthenticated) {
+          print(event);
+          var ref = await firebaseInstance
+              .collection("User")
+              .where("email", isEqualTo: Auth().currentUser!.email)
+              .get();
+          await ref.docs.first.reference.update(
+              {"liveLocation": GeoPoint(event.latitude, event.longitude)});
+        } else {
+          print("Not Authicated");
+        }
+      });
+    } catch (e) {
+      print(e);
+    }
+
+    // Timer.periodic(const Duration(seconds: 1), (timer) async {
+    //   /// you can see this log in logcat
+    //   // print('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');
+
+    //   // test using external plugin
+
+    //   final deviceInfo = DeviceInfoPlugin();
+    //   String? device;
+    //   if (Platform.isAndroid) {
+    //     final androidInfo = await deviceInfo.androidInfo;
+    //     device = androidInfo.model;
+    //   }
+
+    //   if (Platform.isIOS) {
+    //     final iosInfo = await deviceInfo.iosInfo;
+    //     device = iosInfo.model;
+    //   }
+    //   try {
+    //     LocationSettings locationSettings = const LocationSettings(
+    //       accuracy: LocationAccuracy.bestForNavigation,
+    //       distanceFilter: 8,
+    //     );
+    //     bool isAuthenticated = false;
+    //     Auth().firebaseAuth.authStateChanges().listen((user) {
+    //       if (user != null) {
+    //         isAuthenticated = true;
+    //       } else {
+    //         isAuthenticated = false;
+    //       }
+    //     });
+
+    //     Geolocator.getPositionStream(locationSettings: locationSettings)
+    //         .listen((event) async {
+    //       if (isAuthenticated) {
+    //         print(event);
+    //         var ref = await firebaseInstance
+    //             .collection("User")
+    //             .where("email", isEqualTo: Auth().currentUser!.email)
+    //             .get();
+    //         await ref.docs.first.reference.update(
+    //             {"liveLocation": GeoPoint(event.latitude, event.longitude)});
+    //       } else {
+    //         print("Not Authicated");
+    //       }
+    //     });
+    //   } catch (e) {
+    //     print(e);
+    //   }
+
+    //   service.invoke(
+    //     'update',
+    //     {
+    //       "current_date": DateTime.now().toIso8601String(),
+    //       "device": device,
+    //     },
+    //   );
+    // });
   }
 }

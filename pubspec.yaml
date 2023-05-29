@@ -71,6 +71,9 @@ dependencies:
   shared_preferences: ^2.1.1
   # flutter_local_notifications: ^14.1.0
   device_info_plus: ^9.0.1
+  flutter_local_notifications: ^14.1.0
+  dependencies:
+  # background_location: ^0.6.0
   # background_location: ^0.7.1
   # flutter_background_geolocation: ^4.11.0
 
