@@ -16,7 +16,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 class RealTimelocationUpdateService {
   static Future<void> initializeService() async {
     final service = FlutterBackgroundService();
-
+    
     await service.configure(
       androidConfiguration: AndroidConfiguration(
 

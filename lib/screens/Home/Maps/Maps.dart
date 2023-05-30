@@ -88,7 +88,7 @@ class _MapsState extends ConsumerState<Maps> {
 //Initial map position on load
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
+    zoom: 13,
   );
 
   void _setMarker(point) {
@@ -1293,7 +1293,7 @@ class _MapsState extends ConsumerState<Maps> {
       bearing: 192.8334901395799,
       target: LatLng(pos.latitude, pos.longitude),
       tilt: 59.440717697143555,
-      zoom: 14,
+      zoom: 12,
     );
     _controller2.animateCamera(CameraUpdate.newCameraPosition(currPos));
 

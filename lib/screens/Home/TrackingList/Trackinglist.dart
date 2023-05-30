@@ -108,8 +108,32 @@ class _TrackingListState extends State<TrackingList> {
       },
     );
   }
-
-  Future _displayDialog(BuildContext context) async {
+Future _displayDialog1() async{
+  return showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text("My Dialog"),
+                  content: Text("This is my dialog."),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("OK"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("Cancel"),
+                    ),
+                  ],
+                );
+              },
+            );
+}
+  Future _displayDialog() async {
     // alter the app state to show a dialog
 
     return showDialog(
@@ -121,7 +145,8 @@ class _TrackingListState extends State<TrackingList> {
           return AlertDialog(
             title: const Text('People to share tour with'),
             content: SizedBox(
-              height: MediaQuery.of(context).copyWith().size.height * 0.09,
+              height: MediaQuery.of(context).copyWith().size.height * 0.1,
+              width: MediaQuery.of(context).copyWith().size.width*0.3,
               child: StatefulBuilder(
                 builder: (context, setState) {
                   return ListView(
@@ -324,7 +349,10 @@ class _TrackingListState extends State<TrackingList> {
       // add items to the to-do list
       floatingActionButton: FloatingActionButton(
           backgroundColor: const Color.fromARGB(255, 48, 125, 145),
-          onPressed: () => _displayDialog(context),
+          onPressed: () {
+            _displayDialog();
+            // print("dssd");
+          },
           tooltip: 'Add',
           child: const Icon(Icons.add)),
     );

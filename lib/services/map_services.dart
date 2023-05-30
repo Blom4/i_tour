@@ -72,6 +72,8 @@ class MapServices {
             in document.data()['monitor'] ?? []) {
           var value = await item.get();
           var user = value.data() ?? {};
+          print(user);
+          print(Auth().currentUser!.email);
           if (user['email'].toString().toLowerCase() ==
               Auth().currentUser!.email.toString().toLowerCase()) {
             found.add({"document": document, "document_data": document.data()});
@@ -80,6 +82,7 @@ class MapServices {
         }
       }
     }
+
     return found;
   }
 
