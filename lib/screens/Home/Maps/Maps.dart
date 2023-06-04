@@ -370,9 +370,10 @@ class _MapsState extends ConsumerState<Maps> {
                             }
 
                             List<AutoCompleteResult> searchResults =
-                                await MapServices().searchPlaces(value);
+                                await MapServices().searchPlaces(value.trim().toLowerCase());
 
                             allSearchResults.setResults(searchResults);
+
                           } else {
                             List<AutoCompleteResult> emptyList = [];
                             allSearchResults.setResults(emptyList);
@@ -410,6 +411,7 @@ class _MapsState extends ConsumerState<Maps> {
 
                             List<Map> searchResults = await MapServices()
                                 .fetchMonitoringPeopleForMap();
+
                             // print(searchResults);
                             searchResults = searchResults.where((element) {
                               return element['document_data']['email']
