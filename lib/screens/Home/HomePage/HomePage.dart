@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:i_tour/screens/Home/Profile/Profile.dart';
 import 'package:i_tour/screens/Home/TrackingList/Trackinglist.dart';
 import 'package:i_tour/screens/Home/TransportCabs/TransportCabs.dart';
+import 'package:i_tour/screens/Home/emergency/Emergency.dart';
 import 'package:i_tour/screens/Home/WeatherForcast/WeatherForcast.dart';
 import 'package:i_tour/screens/Maps/Maps.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
