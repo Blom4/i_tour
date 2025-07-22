@@ -55,6 +55,7 @@ class _HomePageState extends State<HomePage> {
           const Maps(),
           const WeatherForecast(),
           const TransportCabs(),
+          const Emergency(),
           const Profile()
         ];
     }
@@ -81,6 +82,12 @@ class _HomePageState extends State<HomePage> {
             PersistentBottomNavBarItem(
                 icon: const Icon(CupertinoIcons.train_style_one),
                 title: ("Transport"),
+                activeColorPrimary: const Color.fromARGB(255, 24, 110, 39),
+                inactiveColorPrimary: CupertinoColors.systemGrey,
+            ),
+            PersistentBottomNavBarItem(
+                icon: const Icon(CupertinoIcons.building_2_fill),
+                title: ("Emergency"),
                 activeColorPrimary: const Color.fromARGB(255, 24, 110, 39),
                 inactiveColorPrimary: CupertinoColors.systemGrey,
             ),
